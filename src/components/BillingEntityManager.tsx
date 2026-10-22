@@ -31,6 +31,8 @@ interface BillingEntityManagerProps {
   onSetDefault: (entityId: string) => void;
   onReassignCustomers?: (fromEntityId: string, toEntityId: string) => void;
   onNavigateToInvoice: () => void;
+  onViewDetail?: (entityId: string) => void;
+  onEditEntity?: (entityId: string) => void;
 }
 
 const COUNTRY_OPTIONS = [
@@ -52,6 +54,8 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
   onSetDefault,
   onReassignCustomers,
   onNavigateToInvoice,
+  onViewDetail,
+  onEditEntity,
 }) => {
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -587,9 +591,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   return (
                     <tr
                       key={entity.id}
-                      onClick={() => setDetailEntity(entity)}
+                      onClick={() => (onViewDetail ? onViewDetail(entity.id) : setDetailEntity(entity))}
                       className="hover:bg-[#f8f9ff] transition-colors cursor-pointer group"
-                      title="Click row to view details"
+                      title="Click row to view details on dedicated screen"
                     >
                       {/* Entity Code */}
                       <td className="py-3.5 px-4 font-mono font-semibold">
@@ -685,9 +689,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              openEditModal(entity);
+                              if (onEditEntity) {
+                                onEditEntity(entity.id);
+                              } else {
+                                openEditModal(entity);
+                              }
                             }}
-                            title="Edit legal entity"
+                            title="Edit legal entity on dedicated screen"
                             className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />

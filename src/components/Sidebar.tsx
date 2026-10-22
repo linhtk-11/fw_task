@@ -23,10 +23,10 @@ import {
 } from 'lucide-react';
 
 interface SidebarProps {
-  currentView: 'billing' | 'export-invoice' | 'setting' | 'billing-entity';
+  currentView: 'billing' | 'export-invoice' | 'setting' | 'billing-entity' | 'legal-entity-detail';
   settingTab?: string;
   userRole: 'customer' | 'admin';
-  onNavigate: (view: 'billing' | 'export-invoice' | 'setting' | 'billing-entity', subTab?: any) => void;
+  onNavigate: (view: any, subTab?: any) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
@@ -131,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: Settings,
       expandable: true,
       subItems: ['Legal Entity', 'Role & Permission'],
-      isActive: currentView === 'billing-entity' || (currentView === 'setting' && userRole === 'customer'),
+      isActive: currentView === 'billing-entity' || currentView === 'legal-entity-detail' || (currentView === 'setting' && userRole === 'customer'),
       action: () => {
         toggleSection('setting');
         onNavigate('billing-entity');
@@ -233,7 +233,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {(item.subItems || ['Overview', 'Active Manifests']).map((sub) => {
                       const isSubActive =
                         (sub === 'Invoice Setting' && currentView === 'setting') ||
-                        ((sub === 'Legal Entity' || sub === 'Billing Entity') && currentView === 'billing-entity') ||
+                        ((sub === 'Legal Entity' || sub === 'Billing Entity') && (currentView === 'billing-entity' || currentView === 'legal-entity-detail')) ||
                         (sub === 'Invoice' && currentView === 'billing');
 
                       return (

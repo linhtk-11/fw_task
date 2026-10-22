@@ -6,6 +6,7 @@ import { CustomerBillingView } from './components/CustomerBillingView';
 import { CustomerSettingView } from './components/CustomerSettingView';
 import { CreateInvoiceView } from './components/CreateInvoiceView';
 import { BillingEntityManager } from './components/BillingEntityManager';
+import { LegalEntityDetailView } from './components/LegalEntityDetailView';
 import { InvoicePreviewModal } from './components/InvoicePreviewModal';
 import { OrderListModal } from './components/OrderListModal';
 import { SentPaymentModal } from './components/SentPaymentModal';
@@ -31,7 +32,9 @@ import {
 export default function App() {
   // Default to Customer role per request ("khi màn hình customer thì như này, build cho tôi")
   const [userRole, setUserRole] = useState<'customer' | 'admin'>('customer');
-  const [currentView, setCurrentView] = useState<'billing' | 'export-invoice' | 'setting' | 'billing-entity'>('billing');
+  const [currentView, setCurrentView] = useState<'billing' | 'export-invoice' | 'setting' | 'billing-entity' | 'legal-entity-detail'>('billing');
+  const [selectedEntityIdForDetail, setSelectedEntityIdForDetail] = useState<string | null>(null);
+  const [detailInitialMode, setDetailInitialMode] = useState<'view' | 'edit'>('view');
   const [settingTab, setSettingTab] = useState<'general' | 'invoice-setting'>('invoice-setting');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -302,6 +305,30 @@ export default function App() {
             onSetDefault={handleSetDefaultEntity}
             onReassignCustomers={handleReassignCustomers}
             onNavigateToInvoice={() => setCurrentView('billing')}
+            onViewDetail={(entityId) => {
+              setSelectedEntityIdForDetail(entityId);
+              setDetailInitialMode('view');
+              setCurrentView('legal-entity-detail');
+            }}
+            onEditEntity={(entityId) => {
+              setSelectedEntityIdForDetail(entityId);
+              setDetailInitialMode('edit');
+              setCurrentView('legal-entity-detail');
+            }}
+          />
+        )}
+
+        {/* Dedicated Legal Entity Detail & Edit Screen */}
+        {currentView === 'legal-entity-detail' && selectedEntityIdForDetail && (
+          <LegalEntityDetailView
+            entityId={selectedEntityIdForDetail}
+            entities={billingEntities}
+            initialMode={detailInitialMode}
+            onBack={() => setCurrentView('billing-entity')}
+            onUpdateEntity={handleUpdateEntity}
+            onToggleStatus={handleToggleEntityStatus}
+            onSetDefault={handleSetDefaultEntity}
+            onReassignCustomers={handleReassignCustomers}
           />
         )}
 
