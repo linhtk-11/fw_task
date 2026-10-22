@@ -166,8 +166,8 @@ export default function App() {
       return [newEntity, ...updated];
     });
     addToast(
-      'Tạo pháp nhân thành công',
-      `Pháp nhân ${newEntity.code} - ${newEntity.legalName} đã được thêm vào hệ thống.`
+      'Entity Created',
+      `Billing entity ${newEntity.code} - ${newEntity.legalName} has been created successfully.`
     );
   };
 
@@ -184,8 +184,8 @@ export default function App() {
       })
     );
     addToast(
-      'Cập nhật thành công',
-      `Thông tin pháp nhân ${updatedEntity.code} đã được lưu thành công.`
+      'Entity Updated',
+      `Information for ${updatedEntity.code} saved successfully.`
     );
   };
 
@@ -194,8 +194,8 @@ export default function App() {
       prev.map((e) => (e.id === entityId ? { ...e, status: newStatus } : e))
     );
     addToast(
-      'Cập nhật trạng thái',
-      `Pháp nhân đã được chuyển sang trạng thái ${newStatus}.`,
+      'Status Updated',
+      `Billing entity status updated to ${newStatus}.`,
       newStatus === 'Active' ? 'success' : 'info'
     );
   };
@@ -209,8 +209,8 @@ export default function App() {
     );
     const ent = billingEntities.find((e) => e.id === entityId);
     addToast(
-      'Pháp nhân mặc định',
-      `Đã thiết lập ${ent?.code || 'pháp nhân'} làm đơn vị phát hành hóa đơn mặc định.`,
+      'Default Entity Set',
+      `Set ${ent?.code || 'entity'} as the default commercial invoice issuer.`,
       'success'
     );
   };
@@ -243,8 +243,8 @@ export default function App() {
       });
     });
     addToast(
-      'Chuyển khách hàng hoàn tất',
-      `Toàn bộ khách hàng đã được chuyển sang pháp nhân đích.`,
+      'Customers Reassigned',
+      `All assigned customers were successfully transferred to the target entity.`,
       'info'
     );
   };

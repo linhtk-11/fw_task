@@ -10,22 +10,15 @@ import {
   AlertTriangle,
   Eye,
   Edit2,
-  Trash2,
   Users,
-  FileText,
-  DollarSign,
-  Globe,
-  MapPin,
   CreditCard,
   Star,
-  ExternalLink,
-  ChevronDown,
   X,
   ShieldCheck,
   Check,
-  ArrowRight,
-  Info,
   Download,
+  Mail,
+  Calendar,
 } from 'lucide-react';
 import { BillingEntity, MappedCustomer } from '../types/billing';
 import { MOCK_CUSTOMERS } from '../data/mockBillingData';
@@ -129,7 +122,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
     setAssignedCustomerIds([]);
   };
 
-  // Filter Logic
+  // Filter Logic for Entity Table
   const filteredEntities = useMemo(() => {
     return entities.filter((entity) => {
       // Search
@@ -224,11 +217,11 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
   // Form Validation
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    if (!formData.code.trim()) errors.code = 'Mã pháp nhân (Entity Code) là bắt buộc.';
-    if (!formData.legalName.trim()) errors.legalName = 'Tên pháp lý (Legal Name) là bắt buộc.';
-    if (!formData.taxId.trim()) errors.taxId = 'Mã số thuế / Tax ID là bắt buộc.';
-    if (!formData.country.trim()) errors.country = 'Quốc gia là bắt buộc.';
-    if (!formData.address.trim()) errors.address = 'Địa chỉ đăng ký là bắt buộc.';
+    if (!formData.code.trim()) errors.code = 'Entity Code is required.';
+    if (!formData.legalName.trim()) errors.legalName = 'Company Legal Name is required.';
+    if (!formData.taxId.trim()) errors.taxId = 'Tax ID / EIN is required.';
+    if (!formData.country.trim()) errors.country = 'Registered Country is required.';
+    if (!formData.address.trim()) errors.address = 'Registered Business Address is required.';
 
     // Check duplicate code
     const duplicate = entities.find(
@@ -237,7 +230,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         (!editingEntity || e.id !== editingEntity.id)
     );
     if (duplicate) {
-      errors.code = `Mã pháp nhân "${formData.code}" đã tồn tại trên hệ thống.`;
+      errors.code = `Entity Code "${formData.code}" already exists in the system.`;
     }
 
     setFormErrors(errors);
@@ -257,8 +250,8 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
       const existing = editingEntity?.mappedCustomers?.find((m) => m.id === custId);
       return {
         id: custId,
-        companyName: cust?.companyName || existing?.companyName || 'Khách hàng',
-        contactName: cust?.contactName || existing?.contactName || 'Liên hệ',
+        companyName: cust?.companyName || existing?.companyName || 'Customer',
+        contactName: cust?.contactName || existing?.contactName || 'Representative',
         email: cust?.email || existing?.email || 'billing@customer.com',
         assignedDate: existing?.assignedDate || new Date().toISOString().slice(0, 10),
       };
@@ -324,7 +317,6 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
   // Handle Inactive status toggle with Customer warning
   const handleToggleStatusClick = (entity: BillingEntity) => {
     if (entity.status === 'Active') {
-      // Check if entity has mapped customers
       if (entity.customerCount > 0) {
         setDeactivateEntityTarget(entity);
         const otherActive = entities.find(
@@ -386,7 +378,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         <span>/</span>
         <span className="text-[#0058c3] font-semibold">Setting</span>
         <span>/</span>
-        <span className="text-[#0b1c30] font-semibold">Quản lý pháp nhân (Billing Entity)</span>
+        <span className="text-[#0b1c30] font-semibold">Billing Entity Management</span>
       </div>
 
       {/* Header and Action */}
@@ -394,14 +386,14 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-[24px] font-bold text-[#0b1c30] tracking-tight">
-              Quản lý pháp nhân
+              Billing Entity Management
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e5eeff] text-[#0058c3] border border-[#c2c6d6]/40">
-              Billing Entity Management
+              Master Data
             </span>
           </div>
           <p className="text-[13px] text-[#727785] mt-1">
-            Quản lý danh sách các pháp nhân được sử dụng làm đơn vị phát hành hóa đơn (Invoice Issuer) trên hệ thống Fastway.
+            Manage legal entities authorized to issue commercial invoices and handle customer settlements across Fastway.
           </p>
         </div>
 
@@ -412,7 +404,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#424754] bg-white border border-[#c2c6d6] hover:bg-[#f8f9ff] hover:text-[#0b1c30] rounded-lg transition-colors cursor-pointer shadow-2xs"
           >
             <Download className="w-4 h-4 text-[#727785]" />
-            <span>Xuất CSV</span>
+            <span>Export CSV</span>
           </button>
 
           <button
@@ -421,7 +413,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             className="inline-flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Thêm pháp nhân</span>
+            <span>+ Create Billing Entity</span>
           </button>
         </div>
       </div>
@@ -430,39 +422,39 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-2xs">
           <div className="flex items-center justify-between text-[#727785] text-[12px] font-medium">
-            <span>Tổng pháp nhân</span>
+            <span>Total Entities</span>
             <Building2 className="w-4 h-4 text-[#0058c3]" />
           </div>
           <div className="text-[22px] font-bold text-[#0b1c30] mt-1.5">{totalCount}</div>
-          <div className="text-[11px] text-[#727785] mt-0.5">Đơn vị phát hành invoice</div>
+          <div className="text-[11px] text-[#727785] mt-0.5">Commercial invoice issuers</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-2xs">
           <div className="flex items-center justify-between text-[#727785] text-[12px] font-medium">
-            <span>Đang hoạt động (Active)</span>
+            <span>Active Entities</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="text-[22px] font-bold text-emerald-700 mt-1.5">{activeCount}</div>
-          <div className="text-[11px] text-emerald-600 mt-0.5">Sẵn sàng xuất invoice</div>
+          <div className="text-[11px] text-emerald-600 mt-0.5">Ready for invoice generation</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-2xs">
           <div className="flex items-center justify-between text-[#727785] text-[12px] font-medium">
-            <span>Ngưng hoạt động</span>
+            <span>Inactive Entities</span>
             <XCircle className="w-4 h-4 text-gray-400" />
           </div>
           <div className="text-[22px] font-bold text-gray-500 mt-1.5">{inactiveCount}</div>
-          <div className="text-[11px] text-gray-400 mt-0.5">Không nhận đơn mới</div>
+          <div className="text-[11px] text-gray-400 mt-0.5">Suspended from new invoices</div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-2xs">
           <div className="flex items-center justify-between text-[#727785] text-[12px] font-medium">
-            <span>Khách hàng mapping</span>
+            <span>Assigned Customers</span>
             <Users className="w-4 h-4 text-[#0058c3]" />
           </div>
           <div className="text-[22px] font-bold text-[#0058c3] mt-1.5">{totalMapped}</div>
           <div className="text-[11px] text-[#727785] mt-0.5 truncate">
-            Mặc định: {defaultEntity?.code || 'FW-US'}
+            Default: {defaultEntity?.code || 'FW-US'}
           </div>
         </div>
       </div>
@@ -477,7 +469,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tên pháp lý, mã pháp nhân, mã số thuế (EIN / MST)..."
+              placeholder="Search legal name, entity code, Tax ID (EIN / VAT)..."
               className="w-full pl-9 pr-8 py-2 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3] focus:ring-1 focus:ring-[#0058c3] transition-colors"
             />
             {searchQuery && (
@@ -496,10 +488,10 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              aria-label="Lọc theo quốc gia"
+              aria-label="Filter by country"
               className="w-full py-2 px-3 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3] text-[#0b1c30]"
             >
-              <option value="All">Tất cả quốc gia (All Countries)</option>
+              <option value="All">All Countries</option>
               {COUNTRY_OPTIONS.map((c) => (
                 <option key={c.name} value={c.name}>
                   {c.flag} {c.name}
@@ -513,12 +505,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as any)}
-              aria-label="Lọc theo trạng thái"
+              aria-label="Filter by status"
               className="w-full py-2 px-3 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3] text-[#0b1c30]"
             >
-              <option value="All">Tất cả trạng thái</option>
-              <option value="Active">Active (Hoạt động)</option>
-              <option value="Inactive">Inactive (Ngưng)</option>
+              <option value="All">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
             </select>
           </div>
 
@@ -527,7 +519,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             <button
               type="button"
               onClick={handleResetFilters}
-              title="Xóa điều kiện lọc"
+              title="Reset all filters"
               className="w-full py-2 px-2.5 text-[12px] font-medium text-[#424754] hover:text-[#0b1c30] bg-[#f8f9ff] hover:bg-[#eff4ff] border border-[#c2c6d6] rounded-lg transition-colors flex items-center justify-center gap-1 cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -557,9 +549,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 <tr>
                   <td colSpan={7} className="py-12 text-center text-[#727785]">
                     <Building2 className="w-10 h-10 mx-auto text-[#c2c6d6] mb-2" />
-                    <p className="font-medium text-[#0b1c30]">Không tìm thấy pháp nhân nào</p>
+                    <p className="font-medium text-[#0b1c30]">No billing entities found</p>
                     <p className="text-[12px] mt-0.5">
-                      Thử thay đổi từ khóa tìm kiếm hoặc bấm Reset để xem lại toàn bộ danh sách.
+                      Try adjusting your search criteria or click Reset to view all records.
                     </p>
                   </td>
                 </tr>
@@ -596,7 +588,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           {isDefault && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                               <Star className="w-2.5 h-2.5 fill-amber-500 text-amber-500" />
-                              Mặc định
+                              Default
                             </span>
                           )}
                         </div>
@@ -624,7 +616,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           type="button"
                           onClick={() => setCustomerMappingModalEntity(entity)}
                           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0b1c30] hover:text-[#0058c3] transition-colors cursor-pointer"
-                          title="Click để xem danh sách khách hàng đang mapping"
+                          title="Click to view assigned customers list"
                         >
                           <Users className="w-3.5 h-3.5 text-[#727785]" />
                           <span className="font-semibold">{entity.customerCount || 0}</span>
@@ -653,7 +645,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           <button
                             type="button"
                             onClick={() => setDetailEntity(entity)}
-                            title="Xem chi tiết"
+                            title="View details"
                             className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
                           >
                             <Eye className="w-4 h-4" />
@@ -662,7 +654,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           <button
                             type="button"
                             onClick={() => openEditModal(entity)}
-                            title="Chỉnh sửa pháp nhân"
+                            title="Edit billing entity"
                             className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -671,7 +663,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           <button
                             type="button"
                             onClick={() => handleToggleStatusClick(entity)}
-                            title={entity.status === 'Active' ? 'Chuyển sang Inactive' : 'Kích hoạt Active'}
+                            title={entity.status === 'Active' ? 'Deactivate entity' : 'Activate entity'}
                             className={`p-1.5 rounded transition-colors cursor-pointer ${
                               entity.status === 'Active'
                                 ? 'hover:bg-red-50 text-[#727785] hover:text-red-600'
@@ -689,7 +681,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                             <button
                               type="button"
                               onClick={() => onSetDefault(entity.id)}
-                              title="Đặt làm mặc định cho Invoice mới"
+                              title="Set as default billing entity"
                               className="p-1.5 rounded hover:bg-amber-50 text-[#727785] hover:text-amber-600 transition-colors cursor-pointer"
                             >
                               <Star className="w-4 h-4" />
@@ -708,12 +700,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         {/* Footer Info */}
         <div className="px-4 py-3 bg-[#f8f9ff] border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between text-[12px] text-[#727785] gap-2">
           <div>
-            Hiển thị <span className="font-bold text-[#0b1c30]">{filteredEntities.length}</span> trên tổng số{' '}
-            <span className="font-bold text-[#0b1c30]">{entities.length}</span> pháp nhân
+            Showing <span className="font-bold text-[#0b1c30]">{filteredEntities.length}</span> of{' '}
+            <span className="font-bold text-[#0b1c30]">{entities.length}</span> billing entities
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Pháp nhân có lịch sử hóa đơn sẽ không được xóa cứng để bảo toàn dữ liệu kiểm toán.</span>
+            <span>Billing entities with historical invoice records cannot be deleted to preserve financial audit compliance.</span>
           </div>
         </div>
       </div>
@@ -726,12 +718,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             <div className="px-6 py-4 border-b border-[#e2e8f0] flex items-center justify-between bg-[#f8f9ff]">
               <div>
                 <h3 className="text-[17px] font-bold text-[#0b1c30]">
-                  {editingEntity ? 'Chỉnh sửa pháp nhân (Edit Billing Entity)' : 'Thêm mới pháp nhân (Create Billing Entity)'}
+                  {editingEntity ? 'Edit Billing Entity' : 'Create Billing Entity'}
                 </h3>
                 <p className="text-[12px] text-[#727785]">
                   {editingEntity
-                    ? `Cập nhật thông tin cho pháp nhân ${editingEntity.code}`
-                    : 'Thiết lập đơn vị pháp lý mới để xuất hóa đơn kế toán trên Fastway'}
+                    ? `Update corporate and settlement information for ${editingEntity.code}`
+                    : 'Set up a new legal entity for commercial invoice issuance on Fastway'}
                 </p>
               </div>
               <button
@@ -740,7 +732,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   setIsCreateModalOpen(false);
                   setEditingEntity(null);
                 }}
-                className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -748,23 +740,23 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
 
             {/* Modal Form Content */}
             <form onSubmit={handleSaveForm} className="flex-1 overflow-y-auto p-6 space-y-5">
-              {/* Section 1: Thông tin pháp lý */}
+              {/* Section 1: Corporate Legal Information */}
               <div>
                 <h4 className="text-[13px] font-bold text-[#0058c3] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <Building2 className="w-4 h-4" />
-                  <span>1. Thông tin pháp lý doanh nghiệp</span>
+                  <span>1. Corporate Legal Information</span>
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Entity Code */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Mã pháp nhân (Entity Code) <span className="text-red-500">*</span>
+                      Entity Code <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.code}
                       onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                      placeholder="VD: FW-US, PW-VN, FW-EU"
+                      placeholder="e.g. FW-US, PW-VN, FW-EU"
                       className={`w-full px-3 py-2 text-[13px] rounded-lg border font-mono ${
                         formErrors.code ? 'border-red-500 bg-red-50/30' : 'border-[#c2c6d6]'
                       } focus:outline-none focus:border-[#0058c3]`}
@@ -777,7 +769,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Country */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Quốc gia đăng ký <span className="text-red-500">*</span>
+                      Registered Country <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={formData.country}
@@ -802,13 +794,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Legal Name */}
                   <div className="sm:col-span-2">
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Tên pháp lý công ty (Legal Name) <span className="text-red-500">*</span>
+                      Company Legal Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.legalName}
                       onChange={(e) => setFormData({ ...formData, legalName: e.target.value })}
-                      placeholder="VD: FASTWAY LOGISTICS FULFILLMENT LLC"
+                      placeholder="e.g. FASTWAY LOGISTICS FULFILLMENT LLC"
                       className={`w-full px-3 py-2 text-[13px] rounded-lg border ${
                         formErrors.legalName ? 'border-red-500 bg-red-50/30' : 'border-[#c2c6d6]'
                       } focus:outline-none focus:border-[#0058c3] font-semibold`}
@@ -821,13 +813,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Tax ID */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Mã số thuế / EIN / Tax ID <span className="text-red-500">*</span>
+                      Tax ID / EIN <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       value={formData.taxId}
                       onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
-                      placeholder="VD: 84-2910391, 0108923451"
+                      placeholder="e.g. 84-2910391, 0108923451"
                       className={`w-full px-3 py-2 text-[13px] rounded-lg border font-mono ${
                         formErrors.taxId ? 'border-red-500 bg-red-50/30' : 'border-[#c2c6d6]'
                       } focus:outline-none focus:border-[#0058c3]`}
@@ -840,7 +832,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Contact Email */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Email liên hệ kế toán / billing
+                      Billing / Accounting Email
                     </label>
                     <input
                       type="email"
@@ -854,13 +846,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Registered Address */}
                   <div className="sm:col-span-2">
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Địa chỉ đăng ký doanh nghiệp <span className="text-red-500">*</span>
+                      Registered Business Address <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       rows={2}
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      placeholder="Số nhà, đường, quận/huyện, thành phố, bang, mã bưu chính, quốc gia..."
+                      placeholder="Suite, street address, city, state, postal code, country..."
                       className={`w-full px-3 py-2 text-[13px] rounded-lg border ${
                         formErrors.address ? 'border-red-500 bg-red-50/30' : 'border-[#c2c6d6]'
                       } focus:outline-none focus:border-[#0058c3]`}
@@ -872,23 +864,23 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 </div>
               </div>
 
-              {/* Section 2: Tài khoản ngân hàng hiển thị trên Invoice */}
+              {/* Section 2: Bank Account Details */}
               <div className="pt-2 border-t border-[#e2e8f0]">
                 <h4 className="text-[13px] font-bold text-[#0058c3] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <CreditCard className="w-4 h-4" />
-                  <span>2. Thông tin tài khoản ngân hàng (Settlement Bank)</span>
+                  <span>2. Settlement Bank Account Details</span>
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Bank Name */}
                   <div className="sm:col-span-2">
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Tên ngân hàng (Bank Name)
+                      Bank Name
                     </label>
                     <input
                       type="text"
                       value={formData.bankName}
                       onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                      placeholder="VD: BANK OF AMERICA, N.A., JP MORGAN CHASE..."
+                      placeholder="e.g. BANK OF AMERICA, N.A., JP MORGAN CHASE..."
                       className="w-full px-3 py-2 text-[13px] rounded-lg border border-[#c2c6d6] focus:outline-none focus:border-[#0058c3]"
                     />
                   </div>
@@ -896,13 +888,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Account Number */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Số tài khoản (Account Number / IBAN)
+                      Account Number / IBAN
                     </label>
                     <input
                       type="text"
                       value={formData.accountNumber}
                       onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                      placeholder="VD: 98432104523"
+                      placeholder="e.g. 98432104523"
                       className="w-full px-3 py-2 text-[13px] rounded-lg border border-[#c2c6d6] font-mono focus:outline-none focus:border-[#0058c3]"
                     />
                   </div>
@@ -910,13 +902,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* SWIFT / BIC */}
                   <div>
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Mã SWIFT / BIC
+                      SWIFT / BIC Code
                     </label>
                     <input
                       type="text"
                       value={formData.swiftBic}
                       onChange={(e) => setFormData({ ...formData, swiftBic: e.target.value.toUpperCase() })}
-                      placeholder="VD: BOFAUS3N, CHASUS33"
+                      placeholder="e.g. BOFAUS3N, CHASUS33"
                       className="w-full px-3 py-2 text-[13px] rounded-lg border border-[#c2c6d6] font-mono focus:outline-none focus:border-[#0058c3]"
                     />
                   </div>
@@ -924,34 +916,34 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Bank Address */}
                   <div className="sm:col-span-2">
                     <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1">
-                      Địa chỉ chi nhánh ngân hàng (Bank Address)
+                      Bank Branch Address
                     </label>
                     <input
                       type="text"
                       value={formData.bankAddress}
                       onChange={(e) => setFormData({ ...formData, bankAddress: e.target.value })}
-                      placeholder="VD: 100 N Tryon St, Charlotte, NC 28255, USA"
+                      placeholder="e.g. 100 N Tryon St, Charlotte, NC 28255, USA"
                       className="w-full px-3 py-2 text-[13px] rounded-lg border border-[#c2c6d6] focus:outline-none focus:border-[#0058c3]"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Section 3: Gán Customer cho Pháp nhân */}
+              {/* Section 3: Customer Assignment */}
               <div className="pt-2 border-t border-[#e2e8f0]">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-2.5">
                   <div>
                     <h4 className="text-[13px] font-bold text-[#0058c3] uppercase tracking-wider flex items-center gap-1.5">
                       <Users className="w-4 h-4" />
-                      <span>3. Gán Customer cho Pháp nhân (Customer Assignment)</span>
+                      <span>3. Customer Assignment</span>
                     </h4>
                     <p className="text-[11.5px] text-[#727785] mt-0.5">
-                      Chọn khách hàng áp dụng pháp nhân này làm đơn vị xuất hóa đơn.
+                      Select customers to map to this legal entity as their default commercial invoice issuer.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-semibold text-[#0058c3] bg-[#eff4ff] px-2.5 py-1 rounded-full border border-[#0058c3]/20">
-                      Đã gán: {assignedCustomerIds.length} khách hàng
+                      Assigned: {assignedCustomerIds.length} customers
                     </span>
                   </div>
                 </div>
@@ -965,7 +957,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                         type="text"
                         value={customerSearchQuery}
                         onChange={(e) => setCustomerSearchQuery(e.target.value)}
-                        placeholder="Tìm theo tên công ty, người liên hệ, email..."
+                        placeholder="Search by company name, email..."
                         className="w-full pl-9 pr-8 py-1.5 text-[12px] rounded-lg border border-[#c2c6d6] focus:outline-none focus:border-[#0058c3] bg-white"
                       />
                       {customerSearchQuery && (
@@ -985,7 +977,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                         onClick={handleSelectAllFilteredCustomers}
                         className="text-[#0058c3] hover:underline font-medium cursor-pointer"
                       >
-                        Chọn tất cả ({filteredCustomers.length})
+                        Select all ({filteredCustomers.length})
                       </button>
                       <span className="text-[#c2c6d6]">|</span>
                       <button
@@ -993,7 +985,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                         onClick={handleDeselectAllCustomers}
                         className="text-[#727785] hover:text-red-600 font-medium cursor-pointer"
                       >
-                        Bỏ chọn tất cả
+                        Deselect all
                       </button>
                     </div>
                   </div>
@@ -1002,7 +994,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   <div className="border border-[#c2c6d6] rounded-xl max-h-[190px] overflow-y-auto divide-y divide-[#f1f5f9] bg-white shadow-2xs">
                     {filteredCustomers.length === 0 ? (
                       <div className="py-6 text-center text-[12px] text-[#727785]">
-                        Không tìm thấy khách hàng nào khớp với từ khóa tìm kiếm.
+                        No customers matched your search query.
                       </div>
                     ) : (
                       filteredCustomers.map((cust) => {
@@ -1029,7 +1021,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                               <input
                                 type="checkbox"
                                 checked={isSelected}
-                                onChange={() => {}} // Row onClick handles toggle
+                                onChange={() => {}}
                                 className="w-4 h-4 rounded text-[#0058c3] border-[#c2c6d6] focus:ring-[#0058c3] cursor-pointer"
                               />
                               <div className="min-w-0">
@@ -1039,14 +1031,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                                   </span>
                                   {isSelected && (
                                     <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded shrink-0">
-                                      Được gán
+                                      Assigned
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-[11px] text-[#727785] flex items-center gap-1.5 truncate mt-0.5">
-                                  <span>{cust.contactName}</span>
-                                  <span>•</span>
-                                  <span className="font-mono">{cust.email}</span>
+                                <div className="text-[11px] text-[#727785] font-mono truncate mt-0.5">
+                                  {cust.email}
                                 </div>
                               </div>
                             </div>
@@ -1054,11 +1044,11 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                             <div className="text-right shrink-0">
                               {otherEntityMapping ? (
                                 <span className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
-                                  Đang gán: {otherEntityMapping.code}
+                                  Currently: {otherEntityMapping.code}
                                 </span>
                               ) : (
                                 <span className="text-[10.5px] text-[#727785] bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full font-medium">
-                                  Chưa gán
+                                  Unassigned
                                 </span>
                               )}
                             </div>
@@ -1071,7 +1061,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   {/* Selected Customer Badges */}
                   {assignedCustomerIds.length > 0 && (
                     <div className="pt-1.5 flex flex-wrap items-center gap-1.5">
-                      <span className="text-[11px] text-[#727785] font-medium mr-1">Khách hàng đã gán:</span>
+                      <span className="text-[11px] text-[#727785] font-medium mr-1">Assigned customers:</span>
                       {assignedCustomerIds.map((id) => {
                         const cust = MOCK_CUSTOMERS.find((c) => c.id === id);
                         return (
@@ -1098,11 +1088,11 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 </div>
               </div>
 
-              {/* Section 4: Cấu hình trạng thái & Mặc định */}
+              {/* Section 4: Status & Default Configuration */}
               <div className="pt-2 border-t border-[#e2e8f0]">
                 <h4 className="text-[13px] font-bold text-[#0058c3] uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4" />
-                  <span>4. Cấu hình trạng thái & Mặc định</span>
+                  <span>4. Status & Default Configuration</span>
                 </h4>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0]">
                   <div className="flex items-center gap-3">
@@ -1114,15 +1104,15 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       className="w-4 h-4 text-[#0058c3] rounded border-[#c2c6d6] focus:ring-[#0058c3]"
                     />
                     <label htmlFor="isDefaultCheckbox" className="text-[13px] font-medium text-[#0b1c30] cursor-pointer">
-                      <span className="font-semibold">Đặt làm pháp nhân mặc định</span>
+                      <span className="font-semibold">Set as default billing entity</span>
                       <span className="block text-[11px] text-[#727785]">
-                        Tự động chọn pháp nhân này khi xuất hóa đơn nếu khách hàng chưa có cấu hình riêng.
+                        Automatically apply this entity when issuing invoices if the customer has no specific entity assigned.
                       </span>
                     </label>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-[12px] font-semibold text-[#0b1c30]">Trạng thái:</span>
+                    <span className="text-[12px] font-semibold text-[#0b1c30]">Status:</span>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
@@ -1145,13 +1135,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   }}
                   className="px-4 py-2 text-[13px] font-medium text-[#424754] hover:bg-[#f8f9ff] rounded-lg transition-colors border border-[#c2c6d6] cursor-pointer"
                 >
-                  Hủy bỏ
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 text-[13px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs transition-colors cursor-pointer"
                 >
-                  {editingEntity ? 'Lưu thay đổi' : 'Tạo pháp nhân'}
+                  {editingEntity ? 'Save Changes' : 'Create Entity'}
                 </button>
               </div>
             </form>
@@ -1176,12 +1166,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                     </h3>
                     {detailEntity.isDefault && (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                        Mặc định
+                        Default
                       </span>
                     )}
                   </div>
                   <p className="text-[12px] text-[#727785]">
-                    Mã số thuế: <span className="font-mono font-semibold">{detailEntity.taxId}</span> • Quốc gia:{' '}
+                    Tax ID: <span className="font-mono font-semibold">{detailEntity.taxId}</span> • Country:{' '}
                     <span className="font-semibold">{detailEntity.country}</span>
                   </p>
                 </div>
@@ -1198,12 +1188,12 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   className="px-3 py-1.5 text-[12px] font-semibold text-[#0058c3] bg-[#eff4ff] hover:bg-[#dce9ff] rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
-                  <span>Chỉnh sửa</span>
+                  <span>Edit</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setDetailEntity(null)}
-                  className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -1215,19 +1205,19 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
               {/* Quick Metrics */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0]">
-                  <span className="text-[11px] text-[#727785] block font-medium">Khách hàng áp dụng</span>
+                  <span className="text-[11px] text-[#727785] block font-medium">Assigned Customers</span>
                   <span className="text-[18px] font-bold text-[#0058c3]">{detailEntity.customerCount || 0}</span>
                   <span className="text-[11px] text-[#727785] block">Customers</span>
                 </div>
                 <div className="p-3 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0]">
-                  <span className="text-[11px] text-[#727785] block font-medium">Hóa đơn đã xuất</span>
+                  <span className="text-[11px] text-[#727785] block font-medium">Invoices Issued</span>
                   <span className="text-[18px] font-bold text-[#0b1c30]">
                     {(detailEntity.invoicesIssuedCount || 0).toLocaleString()}
                   </span>
                   <span className="text-[11px] text-[#727785] block">Invoices</span>
                 </div>
                 <div className="p-3 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0]">
-                  <span className="text-[11px] text-[#727785] block font-medium">Tổng doanh thu xuất</span>
+                  <span className="text-[11px] text-[#727785] block font-medium">Total Invoiced Revenue</span>
                   <span className="text-[18px] font-bold text-emerald-700">
                     ${(detailEntity.totalInvoicedAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </span>
@@ -1235,10 +1225,10 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 </div>
               </div>
 
-              {/* Section 1: Pháp lý & Đăng ký */}
+              {/* Section 1: Corporate Legal Information */}
               <div className="space-y-3">
                 <h4 className="text-[13px] font-bold text-[#0b1c30] border-b border-[#e2e8f0] pb-1.5 flex items-center justify-between">
-                  <span>Thông tin đăng ký doanh nghiệp</span>
+                  <span>Corporate Legal Information</span>
                   <span
                     className={`px-2 py-0.5 rounded text-[11px] font-bold ${
                       detailEntity.status === 'Active'
@@ -1251,48 +1241,48 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 </h4>
                 <div className="grid grid-cols-2 gap-y-2 text-[13px]">
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Tên pháp lý:</span>
+                    <span className="text-[#727785] block text-[11px]">Legal Name:</span>
                     <span className="font-semibold text-[#0b1c30]">{detailEntity.legalName}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Mã định danh (Code):</span>
+                    <span className="text-[#727785] block text-[11px]">Entity Code:</span>
                     <span className="font-mono font-bold text-[#0058c3]">{detailEntity.code}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Mã số thuế / EIN:</span>
+                    <span className="text-[#727785] block text-[11px]">Tax ID / EIN:</span>
                     <span className="font-mono font-semibold text-[#0b1c30]">{detailEntity.taxId}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Quốc gia:</span>
+                    <span className="text-[#727785] block text-[11px]">Country:</span>
                     <span className="font-semibold text-[#0b1c30]">{detailEntity.country}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[#727785] block text-[11px]">Địa chỉ đăng ký doanh nghiệp:</span>
+                    <span className="text-[#727785] block text-[11px]">Registered Business Address:</span>
                     <span className="font-medium text-[#0b1c30]">{detailEntity.address}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Email liên hệ kế toán:</span>
-                    <span className="font-medium text-[#0058c3]">{detailEntity.contactEmail || 'N/A'}</span>
+                    <span className="text-[#727785] block text-[11px]">Billing Email:</span>
+                    <span className="font-medium font-mono text-[#0058c3]">{detailEntity.contactEmail || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Số điện thoại:</span>
+                    <span className="text-[#727785] block text-[11px]">Contact Phone:</span>
                     <span className="font-medium text-[#0b1c30]">{detailEntity.contactPhone || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Tài khoản ngân hàng */}
+              {/* Section 2: Settlement Bank Account */}
               <div className="space-y-3">
                 <h4 className="text-[13px] font-bold text-[#0b1c30] border-b border-[#e2e8f0] pb-1.5">
-                  Tài khoản ngân hàng thanh toán (Settlement Bank)
+                  Settlement Bank Account Details
                 </h4>
                 <div className="p-3.5 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0] grid grid-cols-2 gap-y-2 text-[13px]">
                   <div className="col-span-2">
-                    <span className="text-[#727785] block text-[11px]">Tên ngân hàng:</span>
-                    <span className="font-bold text-[#0b1c30]">{detailEntity.bankName || 'Chưa cập nhật'}</span>
+                    <span className="text-[#727785] block text-[11px]">Bank Name:</span>
+                    <span className="font-bold text-[#0b1c30]">{detailEntity.bankName || 'Not configured'}</span>
                   </div>
                   <div>
-                    <span className="text-[#727785] block text-[11px]">Số tài khoản:</span>
+                    <span className="text-[#727785] block text-[11px]">Account Number / IBAN:</span>
                     <span className="font-mono font-bold text-[#0058c3]">{detailEntity.accountNumber || 'N/A'}</span>
                   </div>
                   <div>
@@ -1300,18 +1290,18 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                     <span className="font-mono font-bold text-[#0b1c30]">{detailEntity.swiftBic || 'N/A'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-[#727785] block text-[11px]">Địa chỉ ngân hàng:</span>
+                    <span className="text-[#727785] block text-[11px]">Bank Address:</span>
                     <span className="text-[#424754] text-[12px]">{detailEntity.bankAddress || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Section 3: Khách hàng đang liên kết */}
+              {/* Section 3: Assigned Customers */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-1.5">
                   <h4 className="text-[13px] font-bold text-[#0b1c30] flex items-center gap-1.5">
                     <Users className="w-4 h-4 text-[#0058c3]" />
-                    <span>Khách hàng đang cấu hình sử dụng ({detailEntity.customerCount || 0})</span>
+                    <span>Assigned Customers ({detailEntity.customerCount || 0})</span>
                   </h4>
                   <button
                     type="button"
@@ -1320,28 +1310,28 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       setDetailEntity(null);
                       setCustomerMappingModalEntity(target);
                     }}
-                    className="text-[12px] font-semibold text-[#0058c3] hover:underline"
+                    className="text-[12px] font-semibold text-[#0058c3] hover:underline cursor-pointer"
                   >
-                    Xem toàn bộ & gán thêm →
+                    View all customers & manage →
                   </button>
                 </div>
 
-                <div className="divide-y divide-[#f1f5f9] border border-[#e2e8f0] rounded-xl overflow-hidden bg-white max-h-48 overflow-y-auto">
+                <div className="divide-y divide-[#f1f5f9] border border-[#e2e8f0] rounded-xl overflow-hidden bg-white max-h-56 overflow-y-auto">
                   {(detailEntity.mappedCustomers && detailEntity.mappedCustomers.length > 0) ? (
                     detailEntity.mappedCustomers.map((cust) => (
                       <div key={cust.id} className="p-3 flex items-center justify-between text-[12px] hover:bg-[#f8f9ff]">
-                        <div>
-                          <div className="font-bold text-[#0b1c30]">{cust.companyName}</div>
-                          <div className="text-[#727785] text-[11px]">{cust.contactName} • {cust.email}</div>
+                        <div className="min-w-0 pr-3">
+                          <div className="font-bold text-[#0b1c30] truncate">{cust.companyName}</div>
+                          <div className="text-[11px] font-mono text-[#0058c3] truncate">{cust.email}</div>
                         </div>
-                        <span className="text-[11px] text-[#727785] bg-[#f1f5f9] px-2 py-0.5 rounded">
-                          Gán từ: {cust.assignedDate}
+                        <span className="text-[11px] text-[#727785] bg-[#f1f5f9] px-2 py-0.5 rounded font-mono shrink-0">
+                          {cust.assignedDate}
                         </span>
                       </div>
                     ))
                   ) : (
                     <div className="p-4 text-center text-[#727785] text-[12px]">
-                      Chưa có khách hàng nào được gán trực tiếp cho pháp nhân này.
+                      No customers are currently mapped to this legal entity.
                     </div>
                   )}
                 </div>
@@ -1351,37 +1341,37 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             {/* Modal Footer */}
             <div className="px-6 py-3 border-t border-[#e2e8f0] bg-[#f8f9ff] flex items-center justify-between">
               <span className="text-[11px] text-[#727785]">
-                Ngày tạo: {detailEntity.createdAt || '2024-01-01'} • Cập nhật lần cuối: {detailEntity.updatedAt || 'Hôm nay'}
+                Created: {detailEntity.createdAt || '2024-01-01'} • Last Updated: {detailEntity.updatedAt || 'Today'}
               </span>
               <button
                 type="button"
                 onClick={() => setDetailEntity(null)}
                 className="px-4 py-1.5 text-[12px] font-semibold text-[#424754] bg-white border border-[#c2c6d6] hover:bg-[#f8f9ff] rounded-lg transition-colors cursor-pointer"
               >
-                Đóng
+                Close
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* MAPPED CUSTOMERS MODAL */}
+      {/* MAPPED CUSTOMERS MODAL (ALL CUSTOMERS SHOWN IN FULL) */}
       {customerMappingModalEntity && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl border border-[#e2e8f0] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-white rounded-2xl shadow-2xl border border-[#e2e8f0] w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Header */}
             <div className="px-6 py-4 border-b border-[#e2e8f0] flex items-center justify-between bg-[#f8f9ff]">
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-[17px] font-bold text-[#0b1c30]">
-                    Danh sách khách hàng đang sử dụng
+                    Assigned Customers List
                   </h3>
                   <span className="px-2 py-0.5 rounded font-mono text-[11px] font-bold bg-[#eff4ff] text-[#0058c3]">
                     {customerMappingModalEntity.code}
                   </span>
                 </div>
                 <p className="text-[12px] text-[#727785] mt-0.5">
-                  Pháp nhân: <span className="font-semibold text-[#0b1c30]">{customerMappingModalEntity.legalName}</span> ({customerMappingModalEntity.customerCount} Customers)
+                  Legal Entity: <span className="font-semibold text-[#0b1c30]">{customerMappingModalEntity.legalName}</span> ({customerMappingModalEntity.customerCount} Customers)
                 </p>
               </div>
               <button
@@ -1390,7 +1380,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   setCustomerMappingModalEntity(null);
                   setMappingModalSearchQuery('');
                 }}
-                className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-lg text-[#727785] hover:text-[#0b1c30] hover:bg-white flex items-center justify-center transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1404,21 +1394,21 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   type="text"
                   value={mappingModalSearchQuery}
                   onChange={(e) => setMappingModalSearchQuery(e.target.value)}
-                  placeholder="Tìm kiếm khách hàng theo tên công ty, người liên hệ, email..."
+                  placeholder="Search customers by company name or email..."
                   className="w-full pl-9 pr-4 py-2 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3]"
                 />
               </div>
             </div>
 
-            {/* Customers List Table */}
+            {/* Customers List Table - Showing FULL List */}
             <div className="flex-1 overflow-y-auto p-4">
               <table className="w-full text-left border-collapse text-[12px]">
                 <thead>
                   <tr className="bg-[#f8f9ff] text-[#424754] uppercase font-semibold text-[11px] border-b border-[#e2e8f0]">
-                    <th className="py-2.5 px-3">Khách hàng</th>
-                    <th className="py-2.5 px-3">Người liên hệ & Email</th>
-                    <th className="py-2.5 px-3">Ngày gán</th>
-                    <th className="py-2.5 px-3 text-right">Trạng thái</th>
+                    <th className="py-2.5 px-3">Customer</th>
+                    <th className="py-2.5 px-3">Email</th>
+                    <th className="py-2.5 px-3">Assigned Date</th>
+                    <th className="py-2.5 px-3 text-right">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#f1f5f9]">
@@ -1428,25 +1418,30 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       const q = mappingModalSearchQuery.toLowerCase();
                       return (
                         c.companyName.toLowerCase().includes(q) ||
-                        c.contactName.toLowerCase().includes(q) ||
                         c.email.toLowerCase().includes(q)
                       );
                     })
                     .map((cust) => (
-                      <tr key={cust.id} className="hover:bg-[#f8f9ff]">
-                        <td className="py-3 px-3 font-bold text-[#0b1c30]">
-                          {cust.companyName}
-                        </td>
+                      <tr key={cust.id} className="hover:bg-[#f8f9ff] transition-colors">
                         <td className="py-3 px-3">
-                          <div className="font-medium text-[#0b1c30]">{cust.contactName}</div>
-                          <div className="text-[11px] text-[#727785]">{cust.email}</div>
+                          <div className="font-bold text-[#0b1c30]">
+                            {cust.companyName}
+                          </div>
+                          {cust.contactName && (
+                            <div className="text-[11px] text-[#727785]">
+                              {cust.contactName}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3 px-3 font-mono text-[12px] text-[#0058c3]">
+                          {cust.email}
                         </td>
                         <td className="py-3 px-3 text-[#727785] font-mono">
                           {cust.assignedDate}
                         </td>
                         <td className="py-3 px-3 text-right">
-                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            Active Mapped
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            Active
                           </span>
                         </td>
                       </tr>
@@ -1454,13 +1449,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 </tbody>
               </table>
 
-              {(customerMappingModalEntity.customerCount || 0) > (customerMappingModalEntity.mappedCustomers?.length || 0) && (
-                <div className="mt-3 p-3 rounded-lg bg-[#f8f9ff] border border-[#e2e8f0] text-center text-[12px] text-[#727785]">
-                  Và còn{' '}
-                  <span className="font-bold text-[#0b1c30]">
-                    {(customerMappingModalEntity.customerCount || 0) - (customerMappingModalEntity.mappedCustomers?.length || 0)}
-                  </span>{' '}
-                  khách hàng khác đang sử dụng pháp nhân này theo mặc định hệ thống.
+              {(customerMappingModalEntity.mappedCustomers || []).length === 0 && (
+                <div className="p-8 text-center text-[13px] text-[#727785]">
+                  No customers are currently assigned to this legal entity.
                 </div>
               )}
             </div>
@@ -1468,17 +1459,17 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             {/* Footer */}
             <div className="px-6 py-3 border-t border-[#e2e8f0] bg-[#f8f9ff] flex items-center justify-between">
               <span className="text-[12px] text-[#727785]">
-                Tổng cộng: <span className="font-bold text-[#0b1c30]">{customerMappingModalEntity.customerCount}</span> khách hàng
+                Total: <span className="font-bold text-[#0b1c30]">{customerMappingModalEntity.customerCount || (customerMappingModalEntity.mappedCustomers || []).length}</span> customers
               </span>
               <button
                 type="button"
                 onClick={() => {
                   setCustomerMappingModalEntity(null);
-                  setCustomerSearchQuery('');
+                  setMappingModalSearchQuery('');
                 }}
                 className="px-4 py-1.5 text-[12px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg transition-colors cursor-pointer"
               >
-                Đóng
+                Close
               </button>
             </div>
           </div>
@@ -1495,23 +1486,23 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
               </div>
               <div>
                 <h3 className="text-[17px] font-bold text-[#0b1c30]">
-                  Cảnh báo: Inactive pháp nhân đang có khách hàng
+                  Warning: Deactivating Entity with Active Customers
                 </h3>
                 <p className="text-[13px] text-[#727785] mt-1 leading-relaxed">
-                  Pháp nhân <span className="font-bold text-[#0b1c30]">{deactivateEntityTarget.code} - {deactivateEntityTarget.legalName}</span> hiện đang được liên kết với{' '}
-                  <span className="font-bold text-red-600">{deactivateEntityTarget.customerCount} khách hàng</span>.
+                  Entity <span className="font-bold text-[#0b1c30]">{deactivateEntityTarget.code} - {deactivateEntityTarget.legalName}</span> is currently assigned to{' '}
+                  <span className="font-bold text-red-600">{deactivateEntityTarget.customerCount} customers</span>.
                 </p>
               </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-[12px] text-amber-900 leading-relaxed">
-              <strong>Lưu ý nghiệp vụ:</strong> Nếu bạn chuyển sang Inactive, các khách hàng này sẽ không thể tự động phát hành Invoice định kỳ dưới pháp nhân này cho đến khi được gán sang một pháp nhân Active khác.
+              <strong>Business Notice:</strong> Once deactivated, automated scheduled invoices cannot be issued under this entity until customers are reassigned to an active entity.
             </div>
 
             {/* Reassign Option */}
             <div className="p-3.5 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0] space-y-2">
               <label className="block text-[12px] font-semibold text-[#0b1c30]">
-                Chuyển {deactivateEntityTarget.customerCount} khách hàng này sang pháp nhân khác (Khuyến nghị):
+                Reassign these {deactivateEntityTarget.customerCount} customers to another active entity (Recommended):
               </label>
               <select
                 value={reassignTargetId}
@@ -1522,7 +1513,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   .filter((e) => e.status === 'Active' && e.id !== deactivateEntityTarget.id)
                   .map((e) => (
                     <option key={e.id} value={e.id}>
-                      {e.code} - {e.legalName} ({e.country}) {e.isDefault ? '★ Mặc định' : ''}
+                      {e.code} - {e.legalName} ({e.country}) {e.isDefault ? '★ Default' : ''}
                     </option>
                   ))}
               </select>
@@ -1535,7 +1526,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 onClick={() => setDeactivateEntityTarget(null)}
                 className="px-4 py-2 text-[12px] font-medium text-[#424754] hover:bg-[#f8f9ff] rounded-lg border border-[#c2c6d6] cursor-pointer"
               >
-                Hủy bỏ
+                Cancel
               </button>
 
               <button
@@ -1543,7 +1534,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 onClick={() => confirmDeactivation(false)}
                 className="px-3.5 py-2 text-[12px] font-semibold text-red-700 hover:bg-red-50 border border-red-200 rounded-lg cursor-pointer"
               >
-                Vẫn Inactive (Không chuyển)
+                Deactivate Without Reassigning
               </button>
 
               <button
@@ -1552,7 +1543,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                 disabled={!reassignTargetId}
                 className="px-4 py-2 text-[12px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs cursor-pointer disabled:opacity-50"
               >
-                Chuyển KH & Inactive
+                Reassign & Deactivate
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Customer, LegalEntity, OrderItem, InvoiceRecord, BillingMetrics, InvoiceScheduleSettings, BillingEntity } from '../types/billing';
+import { Customer, LegalEntity, OrderItem, InvoiceRecord, BillingMetrics, InvoiceScheduleSettings, BillingEntity, MappedCustomer } from '../types/billing';
 
 export const INITIAL_METRICS: BillingMetrics = {
   balance: 49015.55,
@@ -9,117 +9,221 @@ export const INITIAL_METRICS: BillingMetrics = {
   refund: 378622.92,
 };
 
+// Base helper for generating realistic mapped customer lists
+const generateCustomersForEntity = (
+  prefix: string,
+  baseList: { name: string; contact: string; domain: string }[],
+  startDate: string
+): MappedCustomer[] => {
+  return baseList.map((item, idx) => {
+    const pad = String(idx + 1).padStart(3, '0');
+    const day = String((idx % 28) + 1).padStart(2, '0');
+    const month = String(((idx * 2) % 12) + 1).padStart(2, '0');
+    return {
+      id: `c-${prefix}-${pad}`,
+      companyName: item.name,
+      contactName: item.contact,
+      email: `billing@${item.domain}`,
+      assignedDate: `2024-${month}-${day}`,
+    };
+  });
+};
+
+// 48 Customers for FW-US
+const FW_US_RAW = [
+  { name: 'Printway Co., Ltd', contact: 'Alex Nguyen', domain: 'printway.io' },
+  { name: 'Apex Merch Global', contact: 'David Miller', domain: 'apexmerch.com' },
+  { name: 'Nordic Pod Ltd', contact: 'Astrid Lind', domain: 'nordicpod.se' },
+  { name: 'Bay Express Corp', contact: 'Michael Chen', domain: 'bayexpress.com' },
+  { name: 'Urban Wear Studio', contact: 'Sophia Taylor', domain: 'urbanwear.co' },
+  { name: 'Summit Retail Partners', contact: 'Brian Ross', domain: 'summitretail.com' },
+  { name: 'Pacific Crest Fulfillment', contact: 'Chloe Bennett', domain: 'pacificcrest.us' },
+  { name: 'Blue Ridge Apparel', contact: 'Ethan Ward', domain: 'blueridgeapparel.com' },
+  { name: 'Nova Dropship LLC', contact: 'Grace Kelly', domain: 'novadropship.io' },
+  { name: 'Vanguard Merchandising', contact: 'James Anderson', domain: 'vanguardmerch.com' },
+  { name: 'Horizon E-Commerce Inc', contact: 'Olivia White', domain: 'horizonecom.com' },
+  { name: 'Pinnacle Goods Co.', contact: 'Daniel Cooper', domain: 'pinnaclegoods.net' },
+  { name: 'Coastal Tide Fashion', contact: 'Emma Watson', domain: 'coastaltide.co' },
+  { name: 'Zenith Logistics US', contact: 'Robert Gray', domain: 'zenithlogistics.us' },
+  { name: 'Silverline Brands', contact: 'Mia Martinez', domain: 'silverlinebrands.com' },
+  { name: 'Crown Peak Commerce', contact: 'Lucas Scott', domain: 'crownpeak.io' },
+  { name: 'Echo Valley Goods', contact: 'Lily Evans', domain: 'echovalley.com' },
+  { name: 'Starlight Apparel Group', contact: 'Henry Clark', domain: 'starlightapparel.com' },
+  { name: 'Timberland Logistics LLC', contact: 'Hannah Lewis', domain: 'timberlandlogistics.com' },
+  { name: 'Oasis Direct Global', contact: 'Alexander King', domain: 'oasisdirect.net' },
+  { name: 'Cascade Retail Solutions', contact: 'Harper Wright', domain: 'cascaderetail.com' },
+  { name: 'Ironwood Outfitters', contact: 'Benjamin Hill', domain: 'ironwoodoutfitters.com' },
+  { name: 'Harbor Light Commerce', contact: 'Ella Green', domain: 'harborlight.us' },
+  { name: 'Solstice Lifestyle Brands', contact: 'Sebastian Adams', domain: 'solsticelifestyle.com' },
+  { name: 'Apex Valley Distribution', contact: 'Avery Baker', domain: 'apexvalley.com' },
+  { name: 'Redwood State Merch', contact: 'Jack Gonzalez', domain: 'redwoodmerch.com' },
+  { name: 'Prairie Wind Trading', contact: 'Abigail Nelson', domain: 'prairiewind.co' },
+  { name: 'Beacon Hill E-tailers', contact: 'Samuel Carter', domain: 'beaconhill.io' },
+  { name: 'Grandview Goods LLC', contact: 'Victoria Mitchell', domain: 'grandviewgoods.com' },
+  { name: 'Northstar POD Network', contact: 'Matthew Perez', domain: 'northstarpod.com' },
+  { name: 'TrueNorth Activewear', contact: 'Scarlett Roberts', domain: 'truenorthactive.com' },
+  { name: 'Golden Gate Fulfillment', contact: 'Luke Turner', domain: 'goldengateful.com' },
+  { name: 'Evergreen Supply Chain', contact: 'Madison Phillips', domain: 'evergreensupply.us' },
+  { name: 'Tidal Wave Distribution', contact: 'Owen Campbell', domain: 'tidalwavedist.com' },
+  { name: 'Heritage Clothiers LLC', contact: 'Zoe Parker', domain: 'heritageclothiers.com' },
+  { name: 'Metro South Logistics', contact: 'Gabriel Evans', domain: 'metrosouthlog.com' },
+  { name: 'Aero Freight Direct', contact: 'Penelope Edwards', domain: 'aerofreightdirect.com' },
+  { name: 'Sierra Vista Outpost', contact: 'Wyatt Collins', domain: 'sierravista.io' },
+  { name: 'Crescent Moon Designs', contact: 'Riley Stewart', domain: 'crescentmoondesign.com' },
+  { name: 'Liberty Bell Merchandise', contact: 'Julian Morris', domain: 'libertybellmerch.com' },
+  { name: 'Keystone Supply Group', contact: 'Layla Rogers', domain: 'keystonesupply.net' },
+  { name: 'Great Lakes Trading Co', contact: 'Levi Reed', domain: 'greatlakestrading.com' },
+  { name: 'Sunburst Goods Corp', contact: 'Nora Cook', domain: 'sunburstgoods.com' },
+  { name: 'Highland Logistics Inc', contact: 'Isaac Morgan', domain: 'highlandlogistics.us' },
+  { name: 'Skyline Apparel Partners', contact: 'Camila Bell', domain: 'skylineapparel.com' },
+  { name: 'Frontier Merch Co.', contact: 'Caleb Murphy', domain: 'frontiermerch.com' },
+  { name: 'Copperfield Distribution', contact: 'Eleanor Bailey', domain: 'copperfielddist.com' },
+  { name: 'Nexus POD Solutions', contact: 'Thomas Rivera', domain: 'nexuspodsolutions.io' },
+];
+
+// 25 Customers for PW-US
+const PW_US_RAW = [
+  { name: 'TechLogix Global Inc.', contact: 'Sarah Jenkins', domain: 'techlogix.com' },
+  { name: 'Velocity Dropship', contact: 'Ken Adams', domain: 'velocitydrop.com' },
+  { name: 'Alpha Tees Brand', contact: 'Liam Carter', domain: 'alphatees.net' },
+  { name: 'Prime Stitch Studios', contact: 'Jessica Alba', domain: 'primestitch.com' },
+  { name: 'Kite Runner Logistics', contact: 'Amir Khan', domain: 'kiterunner.org' },
+  { name: 'Urban Canvas Apparel', contact: 'Marcus Stone', domain: 'urbancanvas.co' },
+  { name: 'Brighton Merch Lab', contact: 'Emily Blunt', domain: 'brightonmerch.com' },
+  { name: 'Apex Design Collective', contact: 'Oliver Queen', domain: 'apexdesign.us' },
+  { name: 'Vortex Wearables Inc', contact: 'Barry Allen', domain: 'vortexwear.com' },
+  { name: 'Neon Wave Goods', contact: 'Diana Prince', domain: 'neonwave.io' },
+  { name: 'Cobalt Blue Trading', contact: 'Bruce Wayne', domain: 'cobaltblue.com' },
+  { name: 'Monolith Logistics US', contact: 'Clark Kent', domain: 'monolithlog.com' },
+  { name: 'Vector Sportswear', contact: 'Victor Stone', domain: 'vectorsports.com' },
+  { name: 'Radiant Pod Partners', contact: 'Arthur Curry', domain: 'radiantpod.com' },
+  { name: 'Quantum Retail Group', contact: 'Hal Jordan', domain: 'quantumretail.net' },
+  { name: 'Solaris E-Commerce', contact: 'Kara Danvers', domain: 'solarisecom.io' },
+  { name: 'Titan Merch Supply', contact: 'Ray Palmer', domain: 'titanmerch.com' },
+  { name: 'Zenith Apparel Lab', contact: 'Cisco Ramon', domain: 'zenithapparel.com' },
+  { name: 'Matrix Fulfillment LLC', contact: 'Caitlin Snow', domain: 'matrixfulfillment.com' },
+  { name: 'Horizon Line Brands', contact: 'Wally West', domain: 'horizonline.us' },
+  { name: 'Vanguard Print Co', contact: 'Iris West', domain: 'vanguardprint.com' },
+  { name: 'Equinox Goods Group', contact: 'Roy Harper', domain: 'equinoxgoods.co' },
+  { name: 'Spectra Lifestyle', contact: 'Thea Queen', domain: 'spectralifestyle.com' },
+  { name: 'Pinnacle POD Direct', contact: 'Felicity Smoak', domain: 'pinnaclepod.net' },
+  { name: 'Apex Wave Studios', contact: 'John Diggle', domain: 'apexwavestudios.com' },
+];
+
+// 12 Customers for PW-VN
+const PW_VN_RAW = [
+  { name: 'Hanoi Silk Crafts Ltd', contact: 'Tran Van Nam', domain: 'hanoisilk.vn' },
+  { name: 'Saigon Creative Hub', contact: 'Le Thi Mai', domain: 'saigonhub.vn' },
+  { name: 'Danang Garment Export', contact: 'Nguyen Van Binh', domain: 'dananggarment.vn' },
+  { name: 'Mekong Delta Craft Co', contact: 'Pham Thi Lan', domain: 'mekongcraft.com.vn' },
+  { name: 'Annam Logistics Vietnam', contact: 'Vu Quang Huy', domain: 'annamlogistics.vn' },
+  { name: 'Red River POD Studio', contact: 'Do Hoang Long', domain: 'redriverpod.vn' },
+  { name: 'Lotus Silk & Cotton', contact: 'Hoang Ngoc Anh', domain: 'lotussilk.com' },
+  { name: 'Vina Merch Solutions', contact: 'Bui Thanh Tung', domain: 'vinamerch.vn' },
+  { name: 'Hue Heritage Crafts', contact: 'Nguyen Dinh Thao', domain: 'huecrafts.vn' },
+  { name: 'Can Tho E-Commerce Group', contact: 'Le Hoang Nam', domain: 'canthoecom.vn' },
+  { name: 'Haiphong Port Trading', contact: 'Dinh Tien Dung', domain: 'haiphongtrade.vn' },
+  { name: 'Vietnam Direct Logistics', contact: 'Truong Tan Phat', domain: 'vndirectlogistics.com' },
+];
+
+// 18 Customers for FW-HK
+const FW_HK_RAW = [
+  { name: 'Kowloon Trade Link', contact: 'Wong Ka-Fai', domain: 'kowloontrade.hk' },
+  { name: 'Zenith East Asia Co.', contact: 'Eileen Zhang', domain: 'zenith-ea.com' },
+  { name: 'Victoria Harbor Logistics', contact: 'Raymond Leung', domain: 'victoriaharbor.hk' },
+  { name: 'Pearl River Merch Ltd', contact: 'Cynthia Chan', domain: 'pearlrivermerch.com' },
+  { name: 'Golden Bauhinia Trade', contact: 'Kevin Chow', domain: 'bauhiniatrade.hk' },
+  { name: 'Apex Asia Pacific Cargo', contact: 'Flora Tang', domain: 'apexasiapacific.com' },
+  { name: 'Dragon Gate Fulfillment', contact: 'Samson Lee', domain: 'dragongateful.hk' },
+  { name: 'Pacific Rim Goods HK', contact: 'Sherman Wu', domain: 'pacificrimhk.com' },
+  { name: 'Star Ferry Logistics', contact: 'Vivian Lam', domain: 'starferrylog.com' },
+  { name: 'New Territories Commerce', contact: 'Kenneth Tsang', domain: 'ntcommerce.hk' },
+  { name: 'Cyberport POD Hub', contact: 'Gordon Ho', domain: 'cyberportpod.hk' },
+  { name: 'Mong Kok Creative Lab', contact: 'Kelly Cheng', domain: 'mongkokcreative.com' },
+  { name: 'Hong Kong Freight Direct', contact: 'Wilson Mak', domain: 'hkfreightdirect.hk' },
+  { name: 'Canto Merchandising', contact: 'Ada Fong', domain: 'cantomerch.com' },
+  { name: 'Skyline East Logistics', contact: 'Justin Kwok', domain: 'skylineeast.hk' },
+  { name: 'Grand Horizon Asia', contact: 'Peggy Yip', domain: 'grandhorizon.asia' },
+  { name: 'Tai Po Supply Chain', contact: 'Edmond Poon', domain: 'taiposupply.com' },
+  { name: 'Asia Tech Logistics Ltd', contact: 'Selina Tam', domain: 'asiatechlog.hk' },
+];
+
+// 9 Customers for FW-EU
+const FW_EU_RAW = [
+  { name: 'SwiftShip Logistics EU', contact: 'Marcus Weber', domain: 'swiftship-logistics.de' },
+  { name: 'Rotterdam Cargo Pro', contact: 'Jan de Vries', domain: 'rcargo.nl' },
+  { name: 'Amsterdam POD Direct', contact: 'Sanne van Dijk', domain: 'amsterdampod.nl' },
+  { name: 'Berlin Creative Merch', contact: 'Lukas Schmidt', domain: 'berlincreative.de' },
+  { name: 'Nordic Express Supply', contact: 'Freja Larsen', domain: 'nordicexpress.dk' },
+  { name: 'Antwerp Port Logistics', contact: 'Pieter Claes', domain: 'antwerplogistics.be' },
+  { name: 'Rhine Valley Retail', contact: 'Hannah Fischer', domain: 'rhinevalley.de' },
+  { name: 'Utrecht Fulfillment Hub', contact: 'Daan Bakker', domain: 'utrechtful.nl' },
+  { name: 'Euro Cargo Network', contact: 'Leon Meyer', domain: 'eurocargonet.eu' },
+];
+
+const mappedFwUs = generateCustomersForEntity('fwus', FW_US_RAW, '2024-02-01');
+const mappedPwUs = generateCustomersForEntity('pwus', PW_US_RAW, '2024-03-10');
+const mappedPwVn = generateCustomersForEntity('pwvn', PW_VN_RAW, '2024-06-01');
+const mappedFwHk = generateCustomersForEntity('fwhk', FW_HK_RAW, '2024-02-18');
+const mappedFwEu = generateCustomersForEntity('fweu', FW_EU_RAW, '2025-01-10');
+
+// Comprehensive customer directory for search & assignment
 export const MOCK_CUSTOMERS: Customer[] = [
-  {
-    id: 'cust-1',
-    companyName: 'Printway Co., Ltd',
-    contactName: 'Alex Nguyen',
-    email: 'vendor@printway.io',
-    billingAddress: '123 Enterprise Blvd, Suite 400, Wilmington, DE 19801, USA',
-    accountNumber: '24325465655',
-    swiftBic: 'CHASUS33',
-    bankName: 'JP MORGAN CHASE, N.A.',
-    bankAddress: '383 MADISON NEW YORK, NY10179',
-  },
-  {
-    id: 'cust-2',
-    companyName: 'TechLogix Global Inc.',
-    contactName: 'Sarah Jenkins',
-    email: 'billing@techlogix.com',
-    billingAddress: '550 Market St, 12th Floor, San Francisco, CA 94104, USA',
-    accountNumber: '98432104523',
+  ...mappedFwUs.map((c, i) => ({
+    id: c.id,
+    companyName: c.companyName,
+    contactName: c.contactName,
+    email: c.email,
+    billingAddress: `${100 + i * 12} Industrial Pkwy, Suite ${i + 1}, Austin, TX 78701, USA`,
+    accountNumber: `984321${String(i).padStart(5, '0')}`,
     swiftBic: 'BOFAUS3N',
     bankName: 'BANK OF AMERICA, N.A.',
     bankAddress: '100 N Tryon St, Charlotte, NC 28255',
-  },
-  {
-    id: 'cust-3',
-    companyName: 'SwiftShip Logistics EU',
-    contactName: 'Marcus Weber',
-    email: 'finance@swiftship-logistics.de',
-    billingAddress: 'Friedrichstraße 180, 10117 Berlin, Germany',
-    accountNumber: 'DE89370400440532013000',
-    swiftBic: 'DEUTDEDBFXX',
-    bankName: 'DEUTSCHE BANK AG',
-    bankAddress: 'Taunusanlage 12, 60325 Frankfurt, Germany',
-  },
-  {
-    id: 'cust-4',
-    companyName: 'Apex Merch Global',
-    contactName: 'David Miller',
-    email: 'david@apexmerch.com',
-    billingAddress: '742 Evergreen Terrace, Springfield, OR 97477, USA',
-    accountNumber: '44592019482',
-    swiftBic: 'WELLFARM',
-    bankName: 'WELLS FARGO BANK, N.A.',
-    bankAddress: '420 Montgomery St, San Francisco, CA 94104',
-  },
-  {
-    id: 'cust-5',
-    companyName: 'Nordic Pod Ltd',
-    contactName: 'Astrid Lind',
-    email: 'finance@nordicpod.se',
-    billingAddress: 'Hamngatan 15, 111 47 Stockholm, Sweden',
-    accountNumber: 'SE54500000000549100000',
-    swiftBic: 'HANDSESS',
-    bankName: 'SVENSKA HANDELSBANKEN AB',
-    bankAddress: 'Kungsträdgårdsgatan 2, 106 70 Stockholm',
-  },
-  {
-    id: 'cust-6',
-    companyName: 'Bay Express Corp',
-    contactName: 'Michael Chen',
-    email: 'billing@bayexpress.com',
-    billingAddress: '888 Harbor View Ave, Oakland, CA 94607, USA',
-    accountNumber: '33189201948',
-    swiftBic: 'CITIUS33',
-    bankName: 'CITIBANK, N.A.',
-    bankAddress: '388 Greenwich St, New York, NY 10013',
-  },
-  {
-    id: 'cust-7',
-    companyName: 'Urban Wear Studio',
-    contactName: 'Sophia Taylor',
-    email: 'accounts@urbanwear.co',
-    billingAddress: '190 Bowery, New York, NY 10012, USA',
-    accountNumber: '77291039485',
+  })),
+  ...mappedPwUs.map((c, i) => ({
+    id: c.id,
+    companyName: c.companyName,
+    contactName: c.contactName,
+    email: c.email,
+    billingAddress: `${200 + i * 15} Market St, San Francisco, CA 94104, USA`,
+    accountNumber: `243254${String(i).padStart(5, '0')}`,
     swiftBic: 'CHASUS33',
     bankName: 'JP MORGAN CHASE, N.A.',
-    bankAddress: '270 Park Ave, New York, NY 10017',
-  },
-  {
-    id: 'cust-8',
-    companyName: 'Hanoi Silk Crafts Ltd',
-    contactName: 'Tran Van Nam',
-    email: 'nam@hanoisilk.vn',
-    billingAddress: '28 Hang Gai, Hoan Kiem, Hanoi, Vietnam',
-    accountNumber: '0011004389921',
+    bankAddress: '383 Madison Ave, New York, NY 10179',
+  })),
+  ...mappedPwVn.map((c, i) => ({
+    id: c.id,
+    companyName: c.companyName,
+    contactName: c.contactName,
+    email: c.email,
+    billingAddress: `${15 + i * 2} Trung Hoa, Cau Giay District, Hanoi, Vietnam`,
+    accountNumber: `001100${String(i).padStart(7, '0')}`,
     swiftBic: 'BFTVVNVX',
     bankName: 'VIETCOMBANK',
-    bankAddress: '198 Tran Quang Khai, Hanoi, Vietnam',
-  },
-  {
-    id: 'cust-9',
-    companyName: 'Saigon Creative Hub',
-    contactName: 'Le Thi Mai',
-    email: 'mai@saigonhub.vn',
-    billingAddress: '68 Nguyen Hue, District 1, Ho Chi Minh City, Vietnam',
-    accountNumber: '190348291039',
-    swiftBic: 'VTCBVNVX',
-    bankName: 'TECHCOMBANK',
-    bankAddress: '119 Tran Duy Hung, Hanoi, Vietnam',
-  },
-  {
-    id: 'cust-10',
-    companyName: 'Velocity Dropship',
-    contactName: 'Ken Adams',
-    email: 'admin@velocitydrop.com',
-    billingAddress: '1004 Ocean Drive, Miami Beach, FL 33139, USA',
-    accountNumber: '55610293847',
-    swiftBic: 'BOFAUS3N',
-    bankName: 'BANK OF AMERICA, N.A.',
-    bankAddress: '100 N Tryon St, Charlotte, NC 28255',
-  },
+    bankAddress: '198 Tran Quang Khai, Hoan Kiem, Hanoi, Vietnam',
+  })),
+  ...mappedFwHk.map((c, i) => ({
+    id: c.id,
+    companyName: c.companyName,
+    contactName: c.contactName,
+    email: c.email,
+    billingAddress: `Unit ${i + 1}, 12/F, Science Museum Rd, Tsim Sha Tsui, Hong Kong`,
+    accountNumber: `808-${String(i).padStart(6, '0')}-001`,
+    swiftBic: 'HSBCHKHHHKH',
+    bankName: 'HSBC',
+    bankAddress: '1 Queen\'s Road Central, Hong Kong',
+  })),
+  ...mappedFwEu.map((c, i) => ({
+    id: c.id,
+    companyName: c.companyName,
+    contactName: c.contactName,
+    email: c.email,
+    billingAddress: `Keizersgracht ${400 + i * 10}, 1016 EK Amsterdam, Netherlands`,
+    accountNumber: `NL44INGB000${String(i).padStart(7, '0')}`,
+    swiftBic: 'INGBNL2A',
+    bankName: 'ING BANK N.V.',
+    bankAddress: 'Bijlmerplein 888, Amsterdam, Netherlands',
+  })),
 ];
 
 export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
@@ -139,18 +243,12 @@ export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
     bankAddress: '100 N Tryon St, Charlotte, NC 28255, USA',
     status: 'Active',
     isDefault: true,
-    customerCount: 48,
+    customerCount: mappedFwUs.length, // exactly 48
     invoicesIssuedCount: 1540,
     totalInvoicedAmount: 485920.5,
     createdAt: '2024-01-15',
     updatedAt: '2026-10-18',
-    mappedCustomers: [
-      { id: 'c-101', companyName: 'Printway Co., Ltd', contactName: 'Alex Nguyen', email: 'vendor@printway.io', assignedDate: '2024-02-01' },
-      { id: 'c-102', companyName: 'Apex Merch Global', contactName: 'David Miller', email: 'david@apexmerch.com', assignedDate: '2024-03-12' },
-      { id: 'c-103', companyName: 'Nordic Pod Ltd', contactName: 'Astrid Lind', email: 'finance@nordicpod.se', assignedDate: '2024-05-20' },
-      { id: 'c-104', companyName: 'Bay Express Corp', contactName: 'Michael Chen', email: 'billing@bayexpress.com', assignedDate: '2024-07-04' },
-      { id: 'c-105', companyName: 'Urban Wear Studio', contactName: 'Sophia Taylor', email: 'accounts@urbanwear.co', assignedDate: '2024-09-18' },
-    ],
+    mappedCustomers: mappedFwUs,
   },
   {
     id: 'ent-pw-us',
@@ -168,16 +266,12 @@ export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
     bankAddress: '383 Madison Ave, New York, NY 10179, USA',
     status: 'Active',
     isDefault: false,
-    customerCount: 25,
+    customerCount: mappedPwUs.length, // exactly 25
     invoicesIssuedCount: 890,
     totalInvoicedAmount: 231450.0,
     createdAt: '2024-03-10',
     updatedAt: '2026-09-30',
-    mappedCustomers: [
-      { id: 'c-201', companyName: 'TechLogix Global Inc.', contactName: 'Sarah Jenkins', email: 'billing@techlogix.com', assignedDate: '2024-04-10' },
-      { id: 'c-202', companyName: 'Velocity Dropship', contactName: 'Ken Adams', email: 'admin@velocitydrop.com', assignedDate: '2024-06-15' },
-      { id: 'c-203', companyName: 'Alpha Tees Brand', contactName: 'Liam Carter', email: 'pay@alphatees.net', assignedDate: '2024-08-01' },
-    ],
+    mappedCustomers: mappedPwUs,
   },
   {
     id: 'ent-pw-vn',
@@ -195,15 +289,12 @@ export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
     bankAddress: '198 Tran Quang Khai, Hoan Kiem, Hanoi, Vietnam',
     status: 'Active',
     isDefault: false,
-    customerCount: 12,
+    customerCount: mappedPwVn.length, // exactly 12
     invoicesIssuedCount: 412,
     totalInvoicedAmount: 98400.0,
     createdAt: '2024-06-01',
     updatedAt: '2026-10-12',
-    mappedCustomers: [
-      { id: 'c-301', companyName: 'Hanoi Silk Crafts Ltd', contactName: 'Tran Van Nam', email: 'nam@hanoisilk.vn', assignedDate: '2024-07-10' },
-      { id: 'c-302', companyName: 'Saigon Creative Hub', contactName: 'Le Thi Mai', email: 'mai@saigonhub.vn', assignedDate: '2024-09-01' },
-    ],
+    mappedCustomers: mappedPwVn,
   },
   {
     id: 'ent-fw-hk',
@@ -221,15 +312,12 @@ export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
     bankAddress: '1 Queen\'s Road Central, Hong Kong',
     status: 'Active',
     isDefault: false,
-    customerCount: 18,
+    customerCount: mappedFwHk.length, // exactly 18
     invoicesIssuedCount: 624,
     totalInvoicedAmount: 172900.0,
     createdAt: '2024-02-18',
     updatedAt: '2026-10-05',
-    mappedCustomers: [
-      { id: 'c-401', companyName: 'Kowloon Trade Link', contactName: 'Wong Ka-Fai', email: 'wong@kowloontrade.hk', assignedDate: '2024-03-01' },
-      { id: 'c-402', companyName: 'Zenith East Asia Co.', contactName: 'Eileen Zhang', email: 'billing@zenith-ea.com', assignedDate: '2024-05-19' },
-    ],
+    mappedCustomers: mappedFwHk,
   },
   {
     id: 'ent-fw-eu',
@@ -247,15 +335,12 @@ export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [
     bankAddress: 'Bijlmerplein 888, 1102 MG Amsterdam, Netherlands',
     status: 'Active',
     isDefault: false,
-    customerCount: 9,
+    customerCount: mappedFwEu.length, // exactly 9
     invoicesIssuedCount: 280,
     totalInvoicedAmount: 84120.0,
     createdAt: '2025-01-10',
     updatedAt: '2026-08-14',
-    mappedCustomers: [
-      { id: 'c-501', companyName: 'SwiftShip Logistics EU', contactName: 'Marcus Weber', email: 'finance@swiftship-logistics.de', assignedDate: '2025-02-01' },
-      { id: 'c-502', companyName: 'Rotterdam Cargo Pro', contactName: 'Jan de Vries', email: 'accounting@rcargo.nl', assignedDate: '2025-03-15' },
-    ],
+    mappedCustomers: mappedFwEu,
   },
   {
     id: 'ent-fw-uk',
