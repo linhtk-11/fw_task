@@ -1,0 +1,227 @@
+---
+name: Fastway Enterprise Portal
+colors:
+  surface: '#f8f9ff'
+  surface-dim: '#cbdbf5'
+  surface-bright: '#f8f9ff'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#eff4ff'
+  surface-container: '#e5eeff'
+  surface-container-high: '#dce9ff'
+  surface-container-highest: '#d3e4fe'
+  on-surface: '#0b1c30'
+  on-surface-variant: '#424754'
+  inverse-surface: '#213145'
+  inverse-on-surface: '#eaf1ff'
+  outline: '#727785'
+  outline-variant: '#c2c6d6'
+  surface-tint: '#0059c6'
+  primary: '#0058c3'
+  on-primary: '#ffffff'
+  primary-container: '#1e70eb'
+  on-primary-container: '#fffdff'
+  inverse-primary: '#afc6ff'
+  secondary: '#006c49'
+  on-secondary: '#ffffff'
+  secondary-container: '#6cf8bb'
+  on-secondary-container: '#00714d'
+  tertiary: '#555c73'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#6d758c'
+  on-tertiary-container: '#fffdff'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#d9e2ff'
+  primary-fixed-dim: '#afc6ff'
+  on-primary-fixed: '#001a43'
+  on-primary-fixed-variant: '#004398'
+  secondary-fixed: '#6ffbbe'
+  secondary-fixed-dim: '#4edea3'
+  on-secondary-fixed: '#002113'
+  on-secondary-fixed-variant: '#005236'
+  tertiary-fixed: '#dae2fd'
+  tertiary-fixed-dim: '#bec6e0'
+  on-tertiary-fixed: '#131b2e'
+  on-tertiary-fixed-variant: '#3f465c'
+  background: '#f8f9ff'
+  on-background: '#0b1c30'
+  surface-variant: '#d3e4fe'
+typography:
+  headline-xl:
+    fontFamily: Inter
+    fontSize: 24px
+    fontWeight: '700'
+    lineHeight: 32px
+    letterSpacing: -0.02em
+  headline-lg:
+    fontFamily: Inter
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: 28px
+    letterSpacing: -0.01em
+  metric-value:
+    fontFamily: Inter
+    fontSize: 22px
+    fontWeight: '700'
+    lineHeight: 28px
+    letterSpacing: -0.02em
+  headline-sm:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: '600'
+    lineHeight: 24px
+  body-default:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 18px
+  body-medium:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '500'
+    lineHeight: 18px
+  table-header:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: 16px
+  table-cell:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 18px
+  table-cell-bold:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: '600'
+    lineHeight: 18px
+  caption:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: '400'
+    lineHeight: 16px
+  label-sm:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: '500'
+    lineHeight: 14px
+rounded:
+  sm: 0.125rem
+  DEFAULT: 0.25rem
+  md: 0.375rem
+  lg: 0.5rem
+  xl: 0.75rem
+  full: 9999px
+spacing:
+  gutter: 1rem
+  gutter-sm: 0.75rem
+  gutter-lg: 1.5rem
+  margin: 1.5rem
+  margin-mobile: 1rem
+  space-2xs: 0.125rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 0.75rem
+  space-lg: 1rem
+  space-xl: 1.5rem
+  space-2xl: 2rem
+---
+
+## Brand & Style
+
+This design system is tailored for an enterprise-grade logistics, freight tracking, and operational billing platform. It conveys dependability, high operational throughput, algorithmic clarity, and friction-free data management. The primary users are fleet managers, dispatch coordinators, billing analysts, and enterprise account administrators processing thousands of manifests, shipments, and ledger balances.
+
+The visual style is **Corporate / Modern Enterprise SaaS**:
+- High-clarity white canvas (`#FFFFFF`) framed with subtle slate-tinted containment borders.
+- Crisp utilitarian structure that maximizes data density while retaining rapid scannability.
+- Fastway operational blue as the anchor for primary interactions, paired with a vibrant jade/teal accent reserved for liquidity events (e.g., wallet balance, top-ups, transaction success status).
+- Ultra-legible typography, compact data-grid paddings, and distinct active navigation pills.
+
+## Colors
+
+The color palette reinforces the enterprise logistics workflow:
+- **Primary (`#1E70EB` / `#1877F2`)**: Utilized for actionable focal points, primary table operations (e.g., "Invoice" action buttons), selected state indicators, interactive links, and top-tier badge highlights.
+- **Secondary (`#10B981` / `#059669`)**: Reserved for affirmative states, "Sent Payment" actions, positive account balances, and "Success" status badges.
+- **Tertiary & Headers (`#0F172A` / `#1E293B`)**: Ultra-dark navy-slate used for critical metric values, section headings, and active tabular IDs (`#100000...`).
+- **Neutral Foreground (`#64748B`)**: Slate gray used for secondary labels, table headers, breadcrumb elements, metadata dates, and form helper descriptions.
+- **Surface & Backgrounds**: Base background is pure white `#FFFFFF` with secondary canvas panels at `#F8FAFC`. Card surfaces use pure `#FFFFFF` separated by thin `#E2E8F0` hairline borders.
+- **Status Accents**:
+  - *Success Badge*: Fill `#ECFDF5`, Border `#A7F3D0`, Text `#059669`.
+  - *Active Tab / Pill*: Fill `#0F172A`, Text `#FFFFFF`. Inactive pill: Background `#FFFFFF`, Border `#E2E8F0`, Text `#64748B`.
+  - *Primary Nav Selected*: Fill `#EBF3FE`, Text `#1E70EB`, Icon `#1E70EB`.
+
+## Typography
+
+The typography scale utilizes **Inter** throughout all tiers to guarantee uniform numeric rendering, crisp vertical alignment, and legibility at compact enterprise scales (11px–13px).
+
+- **Data Tables**: Table header text is 12px with semi-bold weighting (`600`) in slate `#64748B`. Standard table cell data is rendered at 13px (`#334155`), while unique identifiers (e.g., Invoice IDs) use semi-bold (`600`) at `#0F172A`.
+- **KPI / Stat Cards**: Metric values use `metric-value` (22px bold `#0F172A`) to ensure rapid ocular scanning across horizontal panels. Metric descriptions remain understated at 12px `#64748B`.
+- **Form Labels**: 12px with medium weight (`500`) `#475569`, providing clear spatial anchoring above 36px-tall input fields.
+
+## Layout & Spacing
+
+The interface uses a multi-tier dashboard layout:
+1. **Left Navigation Drawer**: Fixed width of `240px` (collapsible to `68px`), anchoring navigation hierarchies and system categories.
+2. **Top Header Bar**: Fixed height of `60px`, spanning the content canvas with an embedded search/locale switcher, badge notifications, and the user profile pill.
+3. **Main Content Canvas**: Fluid grid using `gutter: 1rem` and `margin: 1.5rem`.
+   - **Metrics Row**: 6-column flexible grid spanning summary cards (`Balance`, `Top Up`, `Used Credit`, `Sent`, `Paid`, `Refund`).
+   - **Filter & Pill Row**: Inline flex layout with `0.5rem` spacing between segments and quick filters.
+   - **Data Table**: Full-width bordered layout with `12px` vertical row cell padding and `16px` horizontal cell padding for maximum vertical efficiency without crowding.
+
+## Elevation & Depth
+
+This design system minimizes dramatic dropshadows in favor of crisp boundaries, light-refracting borders, and subtle containment:
+- **Card & Panel Layer**: Cards rest on `#FFFFFF` with a single `1px solid #E2E8F0` border and a delicate ambient shadow: `0 1px 3px 0 rgba(15, 23, 42, 0.04)`.
+- **Primary Metric Spotlight**: The active "Balance" card features a distinctive double-highlight treatment: a tinted border `1px solid #10B981` with faint teal wash `rgba(16, 185, 129, 0.02)` to elevate the primary wallet balance above adjacent metrics.
+- **Dropdown & Flyout Menus**: Elevated with `box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04)` surrounded by a `1px solid #E2E8F0` stroke.
+- **Table Row Elevation**: Flat borderless rows delineated by `1px solid #F1F5F9` bottom dividing lines. Hover state introduces a flat `#F8FAFC` background shift without Y-axis translation.
+
+## Shapes
+
+The design system adheres to a crisp, enterprise-focused shape language:
+- **Standard Corners (6px - 8px / `rounded-md`)**: Used for metric cards, table containers, inputs, date pickers, and rectangular action buttons.
+- **Pills (9999px / `rounded-full`)**: Used for category filter tabs (e.g., `Invoice`, `Transaction`), status badges (`Success`, `Pending`), notification indicator dots, and avatar chips.
+- **Compact UI Elements**: Checkboxes have a tight `4px` radius, maintaining industrial clarity.
+
+## Components
+
+### Buttons
+- **Primary Action (Blue)**:
+  - Height: `32px`
+  - Background: `#1E70EB`, text: `#FFFFFF`, font-size: `12px`, font-weight: `500`.
+  - Padding: `0 12px`. Border-radius: `6px`.
+  - Icon: `14px` preceding or trailing label with `6px` gap.
+- **Secondary / Action Ghost (Order List)**:
+  - Height: `32px`.
+  - Background: `#FFFFFF`, border: `1px solid #E2E8F0`, text: `#475569`.
+  - Hover: Background `#F8FAFC`, border-color `#CBD5E1`.
+- **Teal Balance Accent ("Sent Payment")**:
+  - Background: `#10B981`, text: `#FFFFFF`, font-weight: `600`, border-radius: `6px`.
+
+### Category Filter Pills
+- Inline pill row: `32px` height, `border-radius: 9999px`.
+- **Selected**: Background `#0F172A`, text `#FFFFFF`, border `1px solid #0F172A`.
+- **Unselected**: Background `#FFFFFF`, text `#64748B`, border `1px solid #E2E8F0`. Hover: text `#0F172A`, border-color `#CBD5E1`.
+
+### Status Badges
+- Height: `24px`, padding: `0 10px`, border-radius: `9999px`.
+- **Success**: Background `#ECFDF5`, text `#059669`, border `1px solid #A7F3D0`, font-size `12px`, font-weight `500`.
+- **Pending**: Background `#FFFBEB`, text `#D97706`, border `1px solid #FDE68A`.
+- **Failed**: Background `#FEF2F2`, text `#DC2626`, border `1px solid #FECACA`.
+
+### Form Inputs & Date Range Filter
+- Height: `36px`, border: `1px solid #E2E8F0`, border-radius: `6px`, background `#FFFFFF`.
+- Placeholder: `#94A3B8`, text: `#0F172A`, font-size: `13px`.
+- Dual date picker format: Inline calendar icon with centered separator dash (`2026-10-13  -  2026-10-20`).
+
+### Metric Cards
+- Background `#FFFFFF`, border `1px solid #E2E8F0`, border-radius `8px`, padding `16px 20px`.
+- Contains top caption label (`12px #64748B`) and large numerical summary (`22px #0F172A`).
+- Highlight card ("Balance") features inline flex layout with action button positioned beside the numerical value.
+
+### Data Tables
+- Clean horizontal ruled borders (`1px solid #F1F5F9`).
+- Header row: `#F8FAFC` or pure `#FFFFFF` with muted text (`#64748B`, `12px uppercase/bold`).
+- Action column: Inline flex layout housing primary filled utility buttons (`#1E70EB`) alongside outlined companion actions (`#FFFFFF` border `#E2E8F0`).

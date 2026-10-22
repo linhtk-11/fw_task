@@ -1,0 +1,8 @@
+{
+  "name": "Fastway Logistics - Enterprise Billing & Invoicing",
+  "description": "Enterprise logistics billing operations, ledger reconciliation, order breakdown, and automated invoice generation platform for freight and fulfillment.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

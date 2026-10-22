@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fastway Logistics - Billing</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-error-container": "#93000a",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-fixed-variant": "#3f465c",
+            "surface-tint": "#0059c6",
+            "on-background": "#0b1c30",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#004398",
+            "on-error": "#ffffff",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "inverse-primary": "#afc6ff",
+            "surface-dim": "#cbdbf5",
+            "on-surface-variant": "#424754",
+            "on-tertiary-fixed": "#131b2e",
+            "primary-fixed": "#d9e2ff",
+            "primary": "#0058c3",
+            "background": "#f8f9ff",
+            "tertiary-fixed": "#dae2fd",
+            "on-secondary-fixed": "#002113",
+            "surface-container": "#e5eeff",
+            "secondary-fixed": "#6ffbbe",
+            "primary-fixed-dim": "#afc6ff",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001a43",
+            "outline": "#727785",
+            "on-secondary-fixed-variant": "#005236",
+            "secondary-fixed-dim": "#4edea3",
+            "outline-variant": "#c2c6d6",
+            "primary-container": "#1e70eb",
+            "surface-container-low": "#eff4ff",
+            "surface-container-high": "#dce9ff",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-container": "#6d758c",
+            "secondary": "#006c49",
+            "secondary-container": "#6cf8bb",
+            "surface": "#f8f9ff",
+            "tertiary": "#555c73",
+            "inverse-surface": "#213145",
+            "surface-container-highest": "#d3e4fe",
+            "tertiary-fixed-dim": "#bec6e0",
+            "on-tertiary": "#ffffff",
+            "surface-bright": "#f8f9ff",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#fffdff",
+            "on-primary-container": "#fffdff",
+            "on-secondary-container": "#00714d"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "1.5rem",
+            "gutter-lg": "1.5rem",
+            "space-md": "0.75rem",
+            "margin-mobile": "1rem",
+            "gutter-sm": "0.75rem",
+            "space-2xs": "0.125rem",
+            "space-lg": "1rem",
+            "space-2xl": "2rem",
+            "gutter": "1rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1.5rem"
+          },
+          "fontFamily": {
+            "table-cell": ["Inter"],
+            "metric-value": ["Inter"],
+            "headline-xl": ["Inter"],
+            "body-default": ["Inter"],
+            "headline-lg": ["Inter"],
+            "table-cell-bold": ["Inter"],
+            "body-medium": ["Inter"],
+            "headline-sm": ["Inter"],
+            "table-header": ["Inter"],
+            "label-sm": ["Inter"],
+            "caption": ["Inter"]
+          },
+          "fontSize": {
+            "table-cell": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "metric-value": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-default": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "table-cell-bold": ["13px", { "lineHeight": "18px", "fontWeight": "600" }],
+            "body-medium": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "table-header": ["12px", { "lineHeight": "16px", "fontWeight": "600" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "500" }],
+            "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c2c6d6;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full font-body-default text-on-surface bg-background antialiased flex flex-col">
+<!-- ==================== SIDE NAVIGATION BAR ==================== -->
+<aside class="fixed top-0 left-0 h-full w-60 z-40 flex flex-col justify-between p-4 overflow-y-auto bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none custom-scrollbar">
+<div>
+<!-- Brand Logo & Header Area -->
+<div class="flex items-center justify-between pb-5 pt-1 px-1">
+<div class="flex items-center gap-2">
+<!-- Corporate Fastway Truck Emblem -->
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-size: 20px;">local_shipping</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg font-bold text-primary tracking-tight leading-none">Fastway</div>
+<div class="text-label-sm font-label-sm text-outline tracking-wider font-semibold">LOGISTICS .CO</div>
+</div>
+</div>
+<!-- Collapse Menu Chevron Button -->
+<button aria-label="Collapse Menu" class="w-7 h-7 flex items-center justify-center rounded-full bg-surface hover:bg-surface-container text-on-surface-variant transition-colors border border-outline-variant/40" type="button">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+<!-- Navigation Tab Links (JSON exact labels and icons) -->
+<nav class="space-y-1">
+<!-- 1. Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="flex-1">Dashboard</span>
+</a>
+<!-- 2. Tracking -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="flex-1">Tracking</span>
+</a>
+<!-- 3. Orders (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+<span>Orders</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 4. Products (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span>Products</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 5. Pickup (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Pickup</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 6. Freight (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>Freight</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 7. Discount -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="local_offer">local_offer</span>
+<span class="flex-1">Discount</span>
+</a>
+<!-- 8. Billing (ACTIVE NAVIGATION PER SPECIFICATION) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high dark:bg-surface-variant text-primary dark:text-inverse-primary font-semibold transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+<span class="flex-1">Billing</span>
+</a>
+<!-- 9. Report (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="summarize">summarize</span>
+<span>Report</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 10. User Management -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="flex-1">User Management</span>
+</a>
+<!-- 11. Carrier Management (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Carrier Management</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 12. Setting (Expandable) -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Setting</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 13. Ticket -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-surface-bright hover:bg-surface-container-low transition-colors duration-150 cursor-pointer text-body-medium font-body-medium" href="#">
+<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
+<span class="flex-1">Ticket</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom collapse helper -->
+<div class="pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline text-label-sm font-label-sm">
+<span class="font-medium">v3.4.2 Enterprise</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="shield">shield</span>
+</div>
+</aside>
+<!-- ==================== TOP NAVIGATION BAR ==================== -->
+<header class="fixed top-0 right-0 left-60 h-16 z-30 flex items-center justify-end px-6 gap-4 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none">
+<!-- Locale Switcher -->
+<button class="flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low transition-colors duration-150 cursor-pointer" type="button">
+<!-- Flag US SVG Mini -->
+<svg class="w-5 h-3.5 rounded-sm overflow-hidden" viewbox="0 0 640 480">
+<g fill-rule="evenodd">
+<g stroke-width="1pt">
+<path d="M0 0h640v480H0z" fill="#bd3d44"></path>
+<path d="M0 37h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0zm0 74h640v37H0z" fill="#fff"></path>
+<path d="M0 0h288v259H0z" fill="#192f5d"></path>
+</g>
+</g>
+</svg>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="arrow_drop_down">arrow_drop_down</span>
+</button>
+<!-- Notification Bell with Badge -->
+<div class="relative cursor-pointer hover:bg-surface-container-low p-2 rounded-lg transition-colors duration-150">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-primary text-on-primary text-[10px] font-bold rounded-full flex items-center justify-center">3</span>
+</div>
+<!-- User Profile Dropdown Pill -->
+<div class="flex items-center gap-3 pl-2 border-l border-outline-variant/30 cursor-pointer hover:opacity-90 transition-opacity">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold overflow-hidden border border-outline-variant/40">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-body-medium font-body-medium text-on-surface leading-tight">Tôn Khánh Linh</span>
+<span class="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-surface-container text-primary text-[10px] font-semibold tracking-wide border border-outline-variant/20">Super Admin</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant ml-1" data-icon="arrow_drop_down">arrow_drop_down</span>
+</div>
+</header>
+<!-- ==================== MAIN CONTENT CANVAS ==================== -->
+<main class="ml-60 pt-20 p-6 flex-1 flex flex-col gap-6">
+<!-- Page Title -->
+<div class="flex items-center justify-between">
+<h1 class="text-headline-xl font-headline-xl text-on-background">Billing</h1>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 rounded-lg border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant text-body-medium font-body-medium hover:bg-surface-container-low transition-colors duration-150 flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined" data-icon="file_download">file_download</span>
+<span>Export Summary</span>
+</button>
+</div>
+</div>
+<!-- Metrics Row (6-column responsive grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+<!-- 1. Balance (Highlight Card) -->
+<div class="bg-surface-container-lowest border-2 border-secondary/40 rounded-xl p-4 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Balance</div>
+<div class="flex items-baseline justify-between mt-2 gap-2 flex-wrap">
+<span class="text-metric-value font-metric-value text-on-surface tracking-tight">$49,015.55</span>
+<button class="h-7 px-2.5 rounded-lg bg-secondary text-on-secondary hover:bg-secondary/90 transition-colors duration-150 text-caption font-semibold flex items-center gap-1 shadow-sm" type="button">
+<span>Sent Payment</span>
+</button>
+</div>
+</div>
+<!-- 2. Top Up -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Top Up</div>
+<div class="text-metric-value font-metric-value text-on-surface mt-2 tracking-tight">$75,444,264.99</div>
+</div>
+<!-- 3. Used Credit -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Used Credit</div>
+<div class="text-metric-value font-metric-value text-on-surface mt-2 tracking-tight">$64,262.69</div>
+</div>
+<!-- 4. Sent -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Sent</div>
+<div class="text-metric-value font-metric-value text-on-surface mt-2 tracking-tight">$58,978.30</div>
+</div>
+<!-- 5. Paid -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Paid</div>
+<div class="text-metric-value font-metric-value text-on-surface mt-2 tracking-tight">$581,797.81</div>
+</div>
+<!-- 6. Refund -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+<div class="text-caption font-caption text-on-surface-variant font-medium">Refund</div>
+<div class="text-metric-value font-metric-value text-on-surface mt-2 tracking-tight">$378,622.92</div>
+</div>
+</section>
+<!-- Sub-tab Navigation Pills -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1">
+<button class="h-8 px-4 rounded-full border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:border-outline text-body-medium font-body-medium transition-colors" type="button">
+        Transaction
+      </button>
+<button class="h-8 px-4 rounded-full border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:border-outline text-body-medium font-body-medium transition-colors" type="button">
+        Order transaction
+      </button>
+<button class="h-8 px-4 rounded-full border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:border-outline text-body-medium font-body-medium transition-colors" type="button">
+        Orders unpaid
+      </button>
+<button class="h-8 px-4 rounded-full border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:border-outline text-body-medium font-body-medium transition-colors" type="button">
+        Topup request
+      </button>
+<button class="h-8 px-4 rounded-full border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:border-outline text-body-medium font-body-medium transition-colors" type="button">
+        Credit
+      </button>
+<!-- Active Pill -->
+<button class="h-8 px-5 rounded-full bg-inverse-surface text-inverse-on-surface font-semibold text-body-medium shadow-sm transition-colors" type="button">
+        Invoice
+      </button>
+</div>
+<!-- Filters & Actions Toolbar -->
+<section class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
+<!-- Search by Invoice ID -->
+<div>
+<label class="block text-caption font-caption text-on-surface-variant font-medium mb-1.5">Search</label>
+<div class="relative">
+<input class="w-full h-9 pl-3 pr-8 rounded-lg border border-outline-variant/50 text-body-default font-body-default placeholder:text-outline-variant focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-surface-container-lowest" placeholder="Search by Invoice ID" type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-outline-variant pointer-events-none" data-icon="search">search</span>
+</div>
+</div>
+<!-- Date Range Filter -->
+<div>
+<label class="block text-caption font-caption text-on-surface-variant font-medium mb-1.5">Date</label>
+<div class="flex items-center justify-between h-9 px-3 rounded-lg border border-outline-variant/50 bg-surface-container-lowest text-body-default font-body-default">
+<span>2026-10-13</span>
+<span class="text-outline-variant mx-1 font-mono">⇀</span>
+<span>2026-10-20</span>
+<span class="material-symbols-outlined text-outline-variant ml-2" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+<!-- Payment Gateway Filter (Pills display) -->
+<div>
+<label class="block text-caption font-caption text-on-surface-variant font-medium mb-1.5">Payment gateway</label>
+<div class="flex items-center justify-between h-9 px-2 rounded-lg border border-outline-variant/50 bg-surface-container-lowest text-body-default font-body-default overflow-hidden">
+<div class="flex items-center gap-1 overflow-x-auto custom-scrollbar py-0.5">
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-primary text-[11px] font-medium whitespace-nowrap">
+                Fastway Wallet
+                <span class="material-symbols-outlined text-[13px] cursor-pointer" data-icon="close">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container text-primary text-[11px] font-medium whitespace-nowrap">
+                Fastway Credit
+                <span class="material-symbols-outlined text-[13px] cursor-pointer" data-icon="close">close</span>
+</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant ml-1" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+<!-- Customers Filter -->
+<div>
+<label class="block text-caption font-caption text-on-surface-variant font-medium mb-1.5">Customers</label>
+<div class="flex items-center justify-between h-9 px-3 rounded-lg border border-outline-variant/50 bg-surface-container-lowest text-body-default font-body-default cursor-pointer">
+<span class="text-on-surface truncate">All Customers</span>
+<span class="material-symbols-outlined text-on-surface-variant ml-1" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+<!-- Action Button: Create Invoice -->
+<div class="flex items-center justify-end">
+<button class="h-9 px-4 rounded-lg bg-primary-container text-on-primary-container hover:bg-primary transition-colors duration-150 flex items-center gap-1.5 text-body-medium font-body-medium font-semibold shadow-sm whitespace-nowrap" type="button">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Create Invoice</span>
+</button>
+</div>
+</section>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 border-b border-outline-variant/30 text-table-header font-table-header text-on-surface-variant">
+<th class="py-3 px-4">Invoice ID</th>
+<th class="py-3 px-4">Amount (USD)</th>
+<th class="py-3 px-4">Payment gateway</th>
+<th class="py-3 px-4">Date</th>
+<th class="py-3 px-4">Customer</th>
+<th class="py-3 px-4">Status</th>
+<th class="py-3 px-4 text-center">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 text-body-default font-body-default text-on-surface">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063081</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$33.11</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:46:40</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063080</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$9.19</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:46:05</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063079</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$7.62</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Credit</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:46:03</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063078</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$9.19</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:43:31</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063077</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$7.62</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:43:20</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063076</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$33.11</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Credit</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:42:13</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063075</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$9.19</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:40:38</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 8 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063074</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$7.62</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:40:31</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 9 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063073</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$33.11</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:39:20</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 10 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors duration-150">
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface tracking-tight">#100000063072</td>
+<td class="py-3 px-4 font-table-cell-bold text-table-cell-bold text-on-surface">$9.19</td>
+<td class="py-3 px-4 text-on-surface-variant">Fastway Wallet</td>
+<td class="py-3 px-4 text-on-surface-variant font-mono text-[12px]">20-10-2026, 13:38:47</td>
+<td class="py-3 px-4 text-on-surface-variant">vendor@printway.io</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[12px] font-medium bg-secondary-container/40 text-secondary border border-secondary/30">
+                  Success
+                </span>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center justify-center gap-2">
+<button class="h-7 px-2.5 rounded-lg bg-primary-container text-on-primary-container text-caption font-medium hover:bg-primary transition-colors flex items-center gap-1 shadow-xs" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="refresh">refresh</span>
+<span>Invoice</span>
+</button>
+<button class="h-7 px-2.5 rounded-lg bg-surface-container-lowest border border-outline-variant/50 text-on-surface-variant hover:bg-surface-container-low text-caption font-medium transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[15px]" data-icon="list_alt">list_alt</span>
+<span>Order list</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-body-medium font-body-medium text-on-surface-variant bg-surface-container-lowest">
+<div class="text-caption font-caption text-on-surface-variant">
+          Showing <span class="font-semibold text-on-surface">1 - 10</span> of <span class="font-semibold text-on-surface">124</span> records
+        </div>
+<div class="flex items-center gap-1">
+<!-- Prev Button -->
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/30 text-outline-variant opacity-60 cursor-not-allowed flex items-center gap-1 text-caption" disabled="" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_left">chevron_left</span>
+<span>Previous</span>
+</button>
+<!-- Page Numbers -->
+<button class="h-8 w-8 rounded-lg bg-primary-container text-on-primary font-bold text-caption flex items-center justify-center" type="button">1</button>
+<button class="h-8 w-8 rounded-lg hover:bg-surface-container text-on-surface-variant text-caption flex items-center justify-center transition-colors" type="button">2</button>
+<button class="h-8 w-8 rounded-lg hover:bg-surface-container text-on-surface-variant text-caption flex items-center justify-center transition-colors" type="button">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="h-8 w-8 rounded-lg hover:bg-surface-container text-on-surface-variant text-caption flex items-center justify-center transition-colors" type="button">13</button>
+<!-- Next Button -->
+<button class="h-8 px-2.5 rounded-lg border border-outline-variant/40 hover:bg-surface-container-low text-on-surface flex items-center gap-1 text-caption transition-colors" type="button">
+<span>Next</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
