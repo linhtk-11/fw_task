@@ -335,8 +335,16 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
     if (!deactivateEntityTarget) return;
     if (reassign && reassignTargetId && onReassignCustomers) {
       onReassignCustomers(deactivateEntityTarget.id, reassignTargetId);
+      onToggleStatus(deactivateEntityTarget.id, 'Inactive');
+    } else {
+      // Unassign all customers from this entity to avoid having customers linked to an Inactive entity
+      onUpdateEntity({
+        ...deactivateEntityTarget,
+        status: 'Inactive',
+        customerCount: 0,
+        mappedCustomers: [],
+      });
     }
-    onToggleStatus(deactivateEntityTarget.id, 'Inactive');
     setDeactivateEntityTarget(null);
   };
 
@@ -1468,7 +1476,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             </div>
 
             <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-[12px] text-amber-900 leading-relaxed">
-              <strong>Business Notice:</strong> Once deactivated, automated scheduled invoices cannot be issued under this entity until customers are reassigned to an active entity.
+              <strong>Business Notice:</strong> Once deactivated, this entity cannot issue automated invoices. Choosing <strong>Unassign & Deactivate</strong> will remove customer links from this entity so they can be assigned to another active entity.
             </div>
 
             {/* Reassign Option */}
@@ -1504,9 +1512,10 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
               <button
                 type="button"
                 onClick={() => confirmDeactivation(false)}
+                title="Remove customer links and deactivate this legal entity"
                 className="px-3.5 py-2 text-[12px] font-semibold text-red-700 hover:bg-red-50 border border-red-200 rounded-lg cursor-pointer"
               >
-                Deactivate Without Reassigning
+                Unassign & Deactivate
               </button>
 
               <button
