@@ -193,11 +193,6 @@ export const CreateInvoiceView: React.FC<CreateInvoiceViewProps> = ({
               Configure export filters to generate customer ledger document
             </p>
           </div>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[12px] font-medium self-start sm:self-auto shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-            <span>Live Ledger Synced</span>
-          </div>
         </div>
       </div>
 
