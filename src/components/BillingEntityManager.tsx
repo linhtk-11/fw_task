@@ -65,9 +65,10 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
   const [customerMappingModalEntity, setCustomerMappingModalEntity] = useState<BillingEntity | null>(null);
   const [mappingModalSearchQuery, setMappingModalSearchQuery] = useState('');
 
-  // Deactivation confirmation modal
+  // Deactivation & Activation confirmation modals
   const [deactivateEntityTarget, setDeactivateEntityTarget] = useState<BillingEntity | null>(null);
   const [reassignTargetId, setReassignTargetId] = useState<string>('');
+  const [activateEntityTarget, setActivateEntityTarget] = useState<BillingEntity | null>(null);
 
   // Form State for Create / Edit
   const initialFormState = {
@@ -314,38 +315,32 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
     }
   };
 
-  // Handle Inactive status toggle with Customer warning
+  // Handle status toggle switch with confirmation pop up
   const handleToggleStatusClick = (entity: BillingEntity) => {
     if (entity.status === 'Active') {
-      if (entity.customerCount > 0) {
-        setDeactivateEntityTarget(entity);
-        const otherActive = entities.find(
-          (e) => e.status === 'Active' && e.id !== entity.id
-        );
-        setReassignTargetId(otherActive ? otherActive.id : '');
-        return;
-      }
-      onToggleStatus(entity.id, 'Inactive');
+      setDeactivateEntityTarget(entity);
+      const otherActive = entities.find(
+        (e) => e.status === 'Active' && e.id !== entity.id
+      );
+      setReassignTargetId(otherActive ? otherActive.id : '');
     } else {
-      onToggleStatus(entity.id, 'Active');
+      setActivateEntityTarget(entity);
     }
   };
 
-  const confirmDeactivation = (reassign: boolean) => {
+  const confirmDeactivation = () => {
     if (!deactivateEntityTarget) return;
-    if (reassign && reassignTargetId && onReassignCustomers) {
+    if (deactivateEntityTarget.customerCount > 0 && reassignTargetId && onReassignCustomers) {
       onReassignCustomers(deactivateEntityTarget.id, reassignTargetId);
-      onToggleStatus(deactivateEntityTarget.id, 'Inactive');
-    } else {
-      // Unassign all customers from this entity to avoid having customers linked to an Inactive entity
-      onUpdateEntity({
-        ...deactivateEntityTarget,
-        status: 'Inactive',
-        customerCount: 0,
-        mappedCustomers: [],
-      });
     }
+    onToggleStatus(deactivateEntityTarget.id, 'Inactive');
     setDeactivateEntityTarget(null);
+  };
+
+  const confirmActivation = () => {
+    if (!activateEntityTarget) return;
+    onToggleStatus(activateEntityTarget.id, 'Active');
+    setActivateEntityTarget(null);
   };
 
   // Export CSV
@@ -571,26 +566,21 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   return (
                     <tr
                       key={entity.id}
-                      className="hover:bg-[#f8f9ff]/70 transition-colors group"
+                      onClick={() => setDetailEntity(entity)}
+                      className="hover:bg-[#f8f9ff] transition-colors cursor-pointer group"
+                      title="Click row to view details"
                     >
                       {/* Entity Code */}
                       <td className="py-3.5 px-4 font-mono font-semibold">
-                        <button
-                          type="button"
-                          onClick={() => setDetailEntity(entity)}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#eff4ff] hover:bg-[#dce9ff] text-[#0058c3] transition-colors cursor-pointer group-hover:underline"
-                        >
-                          <span>{entity.code}</span>
-                        </button>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#eff4ff] group-hover:bg-[#dce9ff] text-[#0058c3] transition-colors font-mono">
+                          {entity.code}
+                        </span>
                       </td>
 
                       {/* Legal Name */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
-                          <span
-                            onClick={() => setDetailEntity(entity)}
-                            className="font-bold text-[#0b1c30] hover:text-[#0058c3] cursor-pointer transition-colors"
-                          >
+                          <span className="font-bold text-[#0b1c30] group-hover:text-[#0058c3] transition-colors">
                             {entity.legalName}
                           </span>
                           {isDefault && (
@@ -619,10 +609,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       </td>
 
                       {/* Customer Mapping Link */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
                         <button
                           type="button"
-                          onClick={() => setCustomerMappingModalEntity(entity)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomerMappingModalEntity(entity);
+                          }}
                           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0b1c30] hover:text-[#0058c3] transition-colors cursor-pointer"
                           title="Click to view assigned customers list"
                         >
@@ -632,63 +625,60 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                         </button>
                       </td>
 
-                      {/* Status Badge */}
-                      <td className="py-3.5 px-4">
-                        {entity.status === 'Active' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            Active
+                      {/* Status Toggle Switch */}
+                      <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2.5">
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={entity.status === 'Active'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleStatusClick(entity);
+                            }}
+                            title={`Click to ${entity.status === 'Active' ? 'deactivate' : 'activate'} legal entity`}
+                            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#0058c3] focus:ring-offset-1 ${
+                              entity.status === 'Active' ? 'bg-emerald-600' : 'bg-gray-300'
+                            }`}
+                          >
+                            <span
+                              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                                entity.status === 'Active' ? 'translate-x-4' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                          <span
+                            className={`text-[12px] font-semibold select-none ${
+                              entity.status === 'Active' ? 'text-emerald-700' : 'text-gray-500'
+                            }`}
+                          >
+                            {entity.status === 'Active' ? 'Active' : 'Deactive'}
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600 border border-gray-200">
-                            <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                            Inactive
-                          </span>
-                        )}
+                        </div>
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                      <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
-                            onClick={() => setDetailEntity(entity)}
-                            title="View details"
-                            className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => openEditModal(entity)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(entity);
+                            }}
                             title="Edit legal entity"
                             className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
 
-                          <button
-                            type="button"
-                            onClick={() => handleToggleStatusClick(entity)}
-                            title={entity.status === 'Active' ? 'Deactivate entity' : 'Activate entity'}
-                            className={`p-1.5 rounded transition-colors cursor-pointer ${
-                              entity.status === 'Active'
-                                ? 'hover:bg-red-50 text-[#727785] hover:text-red-600'
-                                : 'hover:bg-emerald-50 text-[#727785] hover:text-emerald-600'
-                            }`}
-                          >
-                            {entity.status === 'Active' ? (
-                              <XCircle className="w-4 h-4" />
-                            ) : (
-                              <CheckCircle2 className="w-4 h-4" />
-                            )}
-                          </button>
-
                           {!isDefault && entity.status === 'Active' && (
                             <button
                               type="button"
-                              onClick={() => onSetDefault(entity.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onSetDefault(entity.id);
+                              }}
                               title="Set as default legal entity"
                               className="p-1.5 rounded hover:bg-amber-50 text-[#727785] hover:text-amber-600 transition-colors cursor-pointer"
                             >
@@ -1457,6 +1447,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
       )}
 
       {/* WARNING MODAL: DEACTIVATING ENTITY WITH MAPPED CUSTOMERS */}
+      {/* DEACTIVATE LEGAL ENTITY MODAL */}
       {deactivateEntityTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
           <div className="bg-white rounded-2xl shadow-2xl border border-[#e2e8f0] w-full max-w-lg p-6 space-y-4 animate-in zoom-in-95 duration-150">
@@ -1466,44 +1457,121 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
               </div>
               <div>
                 <h3 className="text-[17px] font-bold text-[#0b1c30]">
-                  Warning: Deactivating Entity with Active Customers
+                  Deactive Legal Entity
                 </h3>
                 <p className="text-[13px] text-[#727785] mt-1 leading-relaxed">
-                  Entity <span className="font-bold text-[#0b1c30]">{deactivateEntityTarget.code} - {deactivateEntityTarget.legalName}</span> is currently assigned to{' '}
-                  <span className="font-bold text-red-600">{deactivateEntityTarget.customerCount} customers</span>.
+                  Entity <span className="font-bold text-[#0b1c30]">{deactivateEntityTarget.code} - {deactivateEntityTarget.legalName}</span>
+                  {deactivateEntityTarget.customerCount > 0 ? (
+                    <> is currently assigned to <span className="font-bold text-red-600">{deactivateEntityTarget.customerCount} customers</span>.</>
+                  ) : (
+                    <> currently has no assigned customers.</>
+                  )}
                 </p>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-[12px] text-amber-900 leading-relaxed">
-              <strong>Business Notice:</strong> Once deactivated, this entity cannot issue automated invoices. Choosing <strong>Unassign & Deactivate</strong> will remove customer links from this entity so they can be assigned to another active entity.
+            {deactivateEntityTarget.customerCount > 0 ? (
+              <>
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-[12px] text-amber-900 leading-relaxed">
+                  <strong>Notice:</strong> Once deactivated, this entity cannot issue automated invoices. Please reassign these customers to an active legal entity before deactivating.
+                </div>
+
+                {/* Reassign Option */}
+                <div className="p-3.5 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0] space-y-2">
+                  <label className="block text-[12px] font-semibold text-[#0b1c30]">
+                    Reassign these {deactivateEntityTarget.customerCount} customers to another active entity:
+                  </label>
+                  <select
+                    value={reassignTargetId}
+                    onChange={(e) => setReassignTargetId(e.target.value)}
+                    className="w-full py-2 px-3 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3]"
+                  >
+                    {entities
+                      .filter((e) => e.status === 'Active' && e.id !== deactivateEntityTarget.id)
+                      .map((e) => (
+                        <option key={e.id} value={e.id}>
+                          {e.code} - {e.legalName} ({e.country}) {e.isDefault ? '★ Default' : ''}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                {/* Modal Actions */}
+                <div className="pt-2 flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setDeactivateEntityTarget(null)}
+                    className="px-4 py-2 text-[12px] font-medium text-[#424754] hover:bg-[#f8f9ff] rounded-lg border border-[#c2c6d6] cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={confirmDeactivation}
+                    disabled={!reassignTargetId}
+                    className="px-4 py-2 text-[12px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs cursor-pointer disabled:opacity-50"
+                  >
+                    Reassign & Deactivate
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-200 text-[12px] text-gray-700 leading-relaxed">
+                  Are you sure you want to deactivate this legal entity? Once deactivated, it cannot be used for commercial invoice issuance until reactivated.
+                </div>
+
+                {/* Modal Actions */}
+                <div className="pt-2 flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setDeactivateEntityTarget(null)}
+                    className="px-4 py-2 text-[12px] font-medium text-[#424754] hover:bg-[#f8f9ff] rounded-lg border border-[#c2c6d6] cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={confirmDeactivation}
+                    className="px-4 py-2 text-[12px] font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-xs cursor-pointer"
+                  >
+                    Deactivate Legal Entity
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ACTIVATE LEGAL ENTITY CONFIRMATION MODAL */}
+      {activateEntityTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl shadow-2xl border border-[#e2e8f0] w-full max-w-md p-6 space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-[17px] font-bold text-[#0b1c30]">
+                  Activate Legal Entity
+                </h3>
+                <p className="text-[13px] text-[#727785] mt-1 leading-relaxed">
+                  Are you sure you want to activate legal entity <span className="font-bold text-[#0b1c30]">{activateEntityTarget.code} - {activateEntityTarget.legalName}</span>?
+                </p>
+              </div>
             </div>
 
-            {/* Reassign Option */}
-            <div className="p-3.5 rounded-xl bg-[#f8f9ff] border border-[#e2e8f0] space-y-2">
-              <label className="block text-[12px] font-semibold text-[#0b1c30]">
-                Reassign these {deactivateEntityTarget.customerCount} customers to another active entity (Recommended):
-              </label>
-              <select
-                value={reassignTargetId}
-                onChange={(e) => setReassignTargetId(e.target.value)}
-                className="w-full py-2 px-3 text-[13px] bg-white border border-[#c2c6d6] rounded-lg focus:outline-none focus:border-[#0058c3]"
-              >
-                {entities
-                  .filter((e) => e.status === 'Active' && e.id !== deactivateEntityTarget.id)
-                  .map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.code} - {e.legalName} ({e.country}) {e.isDefault ? '★ Default' : ''}
-                    </option>
-                  ))}
-              </select>
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[12px] text-emerald-900 leading-relaxed">
+              Once activated, this legal entity will be available to issue commercial invoices and can be assigned to customers.
             </div>
 
-            {/* Modal Actions */}
             <div className="pt-2 flex items-center justify-end gap-2.5">
               <button
                 type="button"
-                onClick={() => setDeactivateEntityTarget(null)}
+                onClick={() => setActivateEntityTarget(null)}
                 className="px-4 py-2 text-[12px] font-medium text-[#424754] hover:bg-[#f8f9ff] rounded-lg border border-[#c2c6d6] cursor-pointer"
               >
                 Cancel
@@ -1511,20 +1579,10 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
 
               <button
                 type="button"
-                onClick={() => confirmDeactivation(false)}
-                title="Remove customer links and deactivate this legal entity"
-                className="px-3.5 py-2 text-[12px] font-semibold text-red-700 hover:bg-red-50 border border-red-200 rounded-lg cursor-pointer"
+                onClick={confirmActivation}
+                className="px-4 py-2 text-[12px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs cursor-pointer"
               >
-                Unassign & Deactivate
-              </button>
-
-              <button
-                type="button"
-                onClick={() => confirmDeactivation(true)}
-                disabled={!reassignTargetId}
-                className="px-4 py-2 text-[12px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs cursor-pointer disabled:opacity-50"
-              >
-                Reassign & Deactivate
+                Activate Legal Entity
               </button>
             </div>
           </div>
