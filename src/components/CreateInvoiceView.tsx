@@ -6,7 +6,6 @@ import {
   Plus,
   Check,
   Eye,
-  ShieldCheck,
   Info,
   DollarSign,
   Percent,
@@ -26,6 +25,13 @@ import {
   LEGAL_ENTITIES,
   MOCK_PAID_ORDERS,
 } from '../data/mockBillingData';
+
+const ALL_GATEWAYS: PaymentGateway[] = [
+  'Fastway Wallet',
+  'Fastway Credit',
+  'Bank Wire',
+  'Direct Debit',
+];
 
 interface CreateInvoiceViewProps {
   onBackToBilling: () => void;
@@ -54,6 +60,7 @@ export const CreateInvoiceView: React.FC<CreateInvoiceViewProps> = ({
     'Fastway Wallet',
     'Fastway Credit',
   ]);
+  const [isGatewayDropdownOpen, setIsGatewayDropdownOpen] = useState(false);
 
   // Invoice Information (Fixed ID and System Auto-generated Date)
   const invoiceId = 'INV-2026-88492';
@@ -281,42 +288,90 @@ export const CreateInvoiceView: React.FC<CreateInvoiceViewProps> = ({
                 <label className="block text-[11px] font-medium text-[#727785] mb-1">
                   Payment Gateway Filter
                 </label>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {(['Fastway Wallet', 'Fastway Credit'] as PaymentGateway[]).map((gw) => (
-                    <button
-                      key={gw}
-                      type="button"
-                      onClick={() =>
-                        setSelectedGateways((prev) =>
-                          prev.includes(gw) ? prev.filter((g) => g !== gw) : [...prev, gw]
-                        )
-                      }
-                      className={`h-8 px-2.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                        selectedGateways.includes(gw)
-                          ? 'bg-[#0b1c30] text-white'
-                          : 'bg-white border border-[#c2c6d6] text-[#727785]'
-                      }`}
-                    >
-                      {selectedGateways.includes(gw) && <Check className="w-3 h-3" />}
-                      <span>{gw}</span>
-                    </button>
-                  ))}
+                <div className="relative">
                   <button
                     type="button"
-                    className="h-8 px-2 rounded-lg border border-dashed border-[#c2c6d6] hover:bg-[#f8f9ff] text-[11px] font-medium text-[#727785] flex items-center gap-1 cursor-pointer"
+                    onClick={() => setIsGatewayDropdownOpen((prev) => !prev)}
+                    className="w-full min-h-[38px] px-3 py-1.5 bg-white border border-[#c2c6d6] rounded-lg text-left text-[12px] flex items-center justify-between gap-2 hover:border-[#1e70eb] focus:ring-1 focus:ring-[#1e70eb] transition-colors cursor-pointer"
                   >
-                    <Plus className="w-3 h-3" />
-                    <span>Add</span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {selectedGateways.length === 0 ? (
+                        <span className="text-[#727785]">All Gateways (No filter applied)</span>
+                      ) : (
+                        selectedGateways.map((gw) => (
+                          <span
+                            key={gw}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#eff4ff] text-[#0058c3] text-[11px] font-medium border border-[#dce9ff]"
+                          >
+                            {gw}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#727785] shrink-0 transition-transform ${
+                        isGatewayDropdownOpen ? 'rotate-180' : ''
+                      }`}
+                    />
                   </button>
+
+                  {isGatewayDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setIsGatewayDropdownOpen(false)}
+                      />
+                      <div className="absolute left-0 top-full mt-1 w-full bg-white rounded-lg border border-[#e2e8f0] shadow-lg z-20 py-2">
+                        <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#f1f5f9] text-[11px]">
+                          <span className="font-semibold text-[#727785]">Select Gateways</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedGateways([...ALL_GATEWAYS])}
+                              className="text-[#0058c3] hover:underline font-medium cursor-pointer"
+                            >
+                              Select all
+                            </button>
+                            <span className="text-[#c2c6d6]">|</span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedGateways([])}
+                              className="text-[#727785] hover:text-[#0b1c30] cursor-pointer"
+                            >
+                              Clear
+                            </button>
+                          </div>
+                        </div>
+                        <div className="py-1">
+                          {ALL_GATEWAYS.map((gw) => {
+                            const isChecked = selectedGateways.includes(gw);
+                            return (
+                              <label
+                                key={gw}
+                                className="flex items-center gap-2.5 px-3 py-2 hover:bg-[#f8f9ff] cursor-pointer text-[12px] text-[#0b1c30] select-none"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => {
+                                    setSelectedGateways((prev) =>
+                                      prev.includes(gw)
+                                        ? prev.filter((g) => g !== gw)
+                                        : [...prev, gw]
+                                    );
+                                  }}
+                                  className="w-4 h-4 rounded text-[#1e70eb] focus:ring-[#1e70eb] border-[#c2c6d6]"
+                                />
+                                <span className="font-medium">{gw}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            </div>
-
-            <div className="bg-[#eff4ff]/60 px-3.5 py-2.5 rounded-lg border border-[#dce9ff] flex items-center justify-between text-[12px]">
-              <span className="text-[#0b1c30] font-medium">
-                {selectedOrders.length} orders automatically included from {dateFrom} to {dateTo} (${subtotal.toFixed(2)} USD)
-              </span>
-              <span className="text-[11px] font-semibold text-[#0058c3]">Auto-Enforced</span>
             </div>
           </div>
 
@@ -473,13 +528,6 @@ export const CreateInvoiceView: React.FC<CreateInvoiceViewProps> = ({
                     </div>
                   </div>
                 </div>
-
-                <div className="p-3 bg-[#eff4ff] rounded-lg border border-[#dce9ff] text-[12px] text-[#0058c3] flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 shrink-0" />
-                  <span>
-                    + ${markupAmount.toFixed(2)} markup will be applied (automatically omitted when printing customer document)
-                  </span>
-                </div>
               </div>
             )}
           </div>
@@ -611,12 +659,6 @@ export const CreateInvoiceView: React.FC<CreateInvoiceViewProps> = ({
               >
                 Cancel
               </button>
-            </div>
-
-            {/* PCI Compliance Trust Seal */}
-            <div className="pt-2 text-center flex items-center justify-center gap-1.5 text-[11px] text-[#727785]">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>PCI-DSS Compliant Logistics Billing</span>
             </div>
           </div>
         </div>

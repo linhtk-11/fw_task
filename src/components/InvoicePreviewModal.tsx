@@ -131,9 +131,6 @@ export const InvoicePreviewModal: React.FC<InvoicePreviewModalProps> = ({
                 <p className="text-[12px] text-[#424754] max-w-[280px] sm:ml-auto leading-relaxed">
                   {activeEntity?.address || '25722 Kingsland Blvd, Ste 103F, Katy, TX 77494, USA'}
                 </p>
-                <p className="text-[11px] text-[#727785] font-mono">
-                  {activeEntity?.regDetails || 'EIN: 84-2910391 • Tax Registered'}
-                </p>
               </div>
             </div>
 
