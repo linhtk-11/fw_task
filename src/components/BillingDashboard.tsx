@@ -44,7 +44,7 @@ export const BillingDashboard: React.FC<BillingDashboardProps> = ({
     'Topup request',
     'Credit',
     'Invoice',
-    'Billing Entity',
+    'Legal Entity',
   ];
 
   // Filters
@@ -178,7 +178,7 @@ export const BillingDashboard: React.FC<BillingDashboardProps> = ({
               key={tab}
               type="button"
               onClick={() => {
-                if (tab === 'Billing Entity' && onNavigateToBillingEntity) {
+                if (tab === 'Legal Entity' && onNavigateToBillingEntity) {
                   onNavigateToBillingEntity();
                 } else {
                   setActiveTab(tab);
@@ -191,7 +191,7 @@ export const BillingDashboard: React.FC<BillingDashboardProps> = ({
               }`}
             >
               <span>{tab}</span>
-              {tab === 'Billing Entity' && (
+              {tab === 'Legal Entity' && (
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0058c3]" />
               )}
             </button>

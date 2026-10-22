@@ -378,7 +378,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         <span>/</span>
         <span className="text-[#0058c3] font-semibold">Setting</span>
         <span>/</span>
-        <span className="text-[#0b1c30] font-semibold">Billing Entity Management</span>
+        <span className="text-[#0b1c30] font-semibold">Legal Entity Management</span>
       </div>
 
       {/* Header and Action */}
@@ -386,7 +386,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-[24px] font-bold text-[#0b1c30] tracking-tight">
-              Billing Entity Management
+              Legal Entity Management
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#e5eeff] text-[#0058c3] border border-[#c2c6d6]/40">
               Master Data
@@ -413,7 +413,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             className="inline-flex items-center gap-2 px-4 py-2 text-[13px] font-semibold text-white bg-[#0058c3] hover:bg-[#004bb0] rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Create Billing Entity</span>
+            <span>+ Create Legal Entity</span>
           </button>
         </div>
       </div>
@@ -654,7 +654,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                           <button
                             type="button"
                             onClick={() => openEditModal(entity)}
-                            title="Edit billing entity"
+                            title="Edit legal entity"
                             className="p-1.5 rounded hover:bg-[#eff4ff] text-[#727785] hover:text-[#0058c3] transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -681,7 +681,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                             <button
                               type="button"
                               onClick={() => onSetDefault(entity.id)}
-                              title="Set as default billing entity"
+                              title="Set as default legal entity"
                               className="p-1.5 rounded hover:bg-amber-50 text-[#727785] hover:text-amber-600 transition-colors cursor-pointer"
                             >
                               <Star className="w-4 h-4" />
@@ -701,11 +701,11 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
         <div className="px-4 py-3 bg-[#f8f9ff] border-t border-[#e2e8f0] flex flex-col sm:flex-row items-center justify-between text-[12px] text-[#727785] gap-2">
           <div>
             Showing <span className="font-bold text-[#0b1c30]">{filteredEntities.length}</span> of{' '}
-            <span className="font-bold text-[#0b1c30]">{entities.length}</span> billing entities
+            <span className="font-bold text-[#0b1c30]">{entities.length}</span> legal entities
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Billing entities with historical invoice records cannot be deleted to preserve financial audit compliance.</span>
+            <span>Legal entities with historical invoice records cannot be deleted to preserve financial audit compliance.</span>
           </div>
         </div>
       </div>
@@ -718,7 +718,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
             <div className="px-6 py-4 border-b border-[#e2e8f0] flex items-center justify-between bg-[#f8f9ff]">
               <div>
                 <h3 className="text-[17px] font-bold text-[#0b1c30]">
-                  {editingEntity ? 'Edit Billing Entity' : 'Create Billing Entity'}
+                  {editingEntity ? 'Edit Legal Entity' : 'Create Legal Entity'}
                 </h3>
                 <p className="text-[12px] text-[#727785]">
                   {editingEntity
@@ -1076,9 +1076,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       className="w-4 h-4 text-[#0058c3] rounded border-[#c2c6d6] focus:ring-[#0058c3]"
                     />
                     <label htmlFor="isDefaultCheckbox" className="text-[13px] font-medium text-[#0b1c30] cursor-pointer">
-                      <span className="font-semibold">Set as default billing entity</span>
+                      <span className="font-semibold">Set as default legal entity</span>
                       <span className="block text-[11px] text-[#727785]">
-                        Automatically apply this entity when issuing invoices if the customer has no specific entity assigned.
+                        Automatically apply this legal entity when issuing invoices if the customer has no specific entity assigned.
                       </span>
                     </label>
                   </div>

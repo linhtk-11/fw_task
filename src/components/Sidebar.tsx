@@ -115,7 +115,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Billing',
       icon: Wallet,
       expandable: true,
-      subItems: ['Invoice', 'Billing Entity'],
+      subItems: ['Invoice', 'Legal Entity'],
       isActive: currentView === 'billing' || currentView === 'export-invoice',
       action: () => {
         toggleSection('billing');
@@ -130,7 +130,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Setting',
       icon: Settings,
       expandable: true,
-      subItems: ['Billing Entity', 'Role & Permission'],
+      subItems: ['Legal Entity', 'Role & Permission'],
       isActive: currentView === 'billing-entity' || (currentView === 'setting' && userRole === 'customer'),
       action: () => {
         toggleSection('setting');
@@ -233,7 +233,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {(item.subItems || ['Overview', 'Active Manifests']).map((sub) => {
                       const isSubActive =
                         (sub === 'Invoice Setting' && currentView === 'setting') ||
-                        (sub === 'Billing Entity' && currentView === 'billing-entity') ||
+                        ((sub === 'Legal Entity' || sub === 'Billing Entity') && currentView === 'billing-entity') ||
                         (sub === 'Invoice' && currentView === 'billing');
 
                       return (
@@ -242,7 +242,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => {
                             if (sub === 'Invoice Setting') {
                               onNavigate('setting', 'invoice-setting');
-                            } else if (sub === 'Billing Entity') {
+                            } else if (sub === 'Legal Entity' || sub === 'Billing Entity') {
                               onNavigate('billing-entity');
                             } else if (sub === 'Invoice') {
                               onNavigate('billing');

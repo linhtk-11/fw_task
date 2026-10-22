@@ -257,7 +257,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                   className="w-full text-left px-3.5 py-2 hover:bg-[#eff4ff] flex items-center gap-2.5 text-[#0058c3] font-semibold cursor-pointer"
                 >
                   <Building2 className="w-4 h-4 text-[#0058c3]" />
-                  <span>Quản lý pháp nhân (Billing Entity)</span>
+                  <span>Legal Entity Management (Pháp Nhân)</span>
                 </button>
               ) : (
                 <button

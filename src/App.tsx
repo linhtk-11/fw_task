@@ -167,7 +167,7 @@ export default function App() {
     });
     addToast(
       'Entity Created',
-      `Billing entity ${newEntity.code} - ${newEntity.legalName} has been created successfully.`
+      `Legal entity ${newEntity.code} - ${newEntity.legalName} has been created successfully.`
     );
   };
 
@@ -195,7 +195,7 @@ export default function App() {
     );
     addToast(
       'Status Updated',
-      `Billing entity status updated to ${newStatus}.`,
+      `Legal entity status updated to ${newStatus}.`,
       newStatus === 'Active' ? 'success' : 'info'
     );
   };
