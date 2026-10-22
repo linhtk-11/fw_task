@@ -1057,34 +1057,6 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       })
                     )}
                   </div>
-
-                  {/* Selected Customer Badges */}
-                  {assignedCustomerIds.length > 0 && (
-                    <div className="pt-1.5 flex flex-wrap items-center gap-1.5">
-                      <span className="text-[11px] text-[#727785] font-medium mr-1">Assigned customers:</span>
-                      {assignedCustomerIds.map((id) => {
-                        const cust = MOCK_CUSTOMERS.find((c) => c.id === id);
-                        return (
-                          <span
-                            key={id}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#eff4ff] text-[#0058c3] rounded-md text-[11px] font-medium border border-[#0058c3]/20"
-                          >
-                            <span className="truncate max-w-[160px]">{cust?.companyName || id}</span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleCustomerSelection(id);
-                              }}
-                              className="text-[#0058c3] hover:text-red-600 transition-colors cursor-pointer"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
                 </div>
               </div>
 
