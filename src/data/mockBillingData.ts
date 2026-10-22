@@ -224,6 +224,29 @@ export const MOCK_CUSTOMERS: Customer[] = [
     bankName: 'ING BANK N.V.',
     bankAddress: 'Bijlmerplein 888, Amsterdam, Netherlands',
   })),
+  // Unassigned Customers (available for assignment when creating new legal entities)
+  ...[
+    { name: 'Apex Commerce Solutions', contact: 'David Miller', domain: 'apexcommerce.io', address: '500 Tech Parkway, Suite 300, San Jose, CA 95110, USA' },
+    { name: 'Zenith Global Retail', contact: 'Sarah Jenkins', domain: 'zenithretail.com', address: '1240 5th Ave, New York, NY 10029, USA' },
+    { name: 'Pacific Tide Logistics', contact: 'Kenji Sato', domain: 'pacifictidelog.com', address: '4-1-1 Roppongi, Minato-ku, Tokyo 106-0032, Japan' },
+    { name: 'Nexus Digital Merch', contact: 'Elena Rostova', domain: 'nexusmerch.com', address: '88 King St, Sydney NSW 2000, Australia' },
+    { name: 'Horizon Direct Fulfilment', contact: 'Oliver Smith', domain: 'horizondirect.co.uk', address: '71-75 Shelton St, Covent Garden, London WC2H 9JQ, UK' },
+    { name: 'Vanguard Express Delivery', contact: 'Carlos Mendez', domain: 'vanguardexp.com', address: 'Reconquista 660, C1003ABN, Buenos Aires, Argentina' },
+    { name: 'Atlas Peak Brands', contact: 'Jessica Alba', domain: 'atlaspeak.com', address: '100 Wilshire Blvd, Santa Monica, CA 90401, USA' },
+    { name: 'Skyline Cross-Border Cargo', contact: 'Wei Zhang', domain: 'skylinecb.com', address: '168 Lujiazui Ring Rd, Pudong, Shanghai, China' },
+    { name: 'Aurora Health & Care Ltd', contact: 'Emma Watson', domain: 'aurorahealth.co.uk', address: '20 Farringdon St, London EC4A 4AB, UK' },
+    { name: 'Solaris Smart Devices', contact: 'Matthias Braun', domain: 'solaris-devices.de', address: 'Friedrichstraße 180, 10117 Berlin, Germany' },
+  ].map((c, i) => ({
+    id: `cust-unassigned-${i + 1}`,
+    companyName: c.name,
+    contactName: c.contact,
+    email: `${c.contact.toLowerCase().replace(/[^a-z]/g, '.')}@${c.domain}`,
+    billingAddress: c.address,
+    accountNumber: `9091${String(i).padStart(6, '0')}`,
+    swiftBic: 'CHASUS33',
+    bankName: 'JP MORGAN CHASE, N.A.',
+    bankAddress: '383 Madison Ave, New York, NY 10179',
+  })),
 ];
 
 export const INITIAL_BILLING_ENTITIES: BillingEntity[] = [

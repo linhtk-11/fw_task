@@ -94,17 +94,38 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
   const [assignedCustomerIds, setAssignedCustomerIds] = useState<string[]>([]);
   const [customerSearchQuery, setCustomerSearchQuery] = useState('');
 
-  // Filtered customers for assignment section
+  // Customers eligible for assignment:
+  // - If creating NEW legal entity: ONLY unassigned customers (customers with an existing entity are prohibited)
+  // - If editing EXISTING legal entity: ONLY customers belonging to this entity or unassigned customers
+  const availableCustomersForEntity = useMemo(() => {
+    return MOCK_CUSTOMERS.filter((cust) => {
+      const assignedEntity = entities.find((e) =>
+        e.mappedCustomers?.some(
+          (mc) => mc.id === cust.id || mc.companyName.toLowerCase() === cust.companyName.toLowerCase()
+        )
+      );
+
+      if (!editingEntity) {
+        // Creating NEW entity: only unassigned customers allowed!
+        return !assignedEntity;
+      } else {
+        // Editing EXISTING entity: only customers of this entity or unassigned customers
+        return !assignedEntity || assignedEntity.id === editingEntity.id;
+      }
+    });
+  }, [entities, editingEntity]);
+
+  // Filtered customers for assignment section (respecting search query)
   const filteredCustomers = useMemo(() => {
-    if (!customerSearchQuery.trim()) return MOCK_CUSTOMERS;
+    if (!customerSearchQuery.trim()) return availableCustomersForEntity;
     const q = customerSearchQuery.toLowerCase();
-    return MOCK_CUSTOMERS.filter(
+    return availableCustomersForEntity.filter(
       (c) =>
         c.companyName.toLowerCase().includes(q) ||
-        c.contactName.toLowerCase().includes(q) ||
+        (c.contactName && c.contactName.toLowerCase().includes(q)) ||
         c.email.toLowerCase().includes(q)
     );
-  }, [customerSearchQuery]);
+  }, [availableCustomersForEntity, customerSearchQuery]);
 
   const toggleCustomerSelection = (customerId: string) => {
     setAssignedCustomerIds((prev) =>
@@ -936,7 +957,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                       <span>3. Customer Assignment</span>
                     </h4>
                     <p className="text-[11.5px] text-[#727785] mt-0.5">
-                      Select customers to map to this legal entity as their default commercial invoice issuer.
+                      {editingEntity
+                        ? 'Select unassigned customers or manage existing customers for this legal entity.'
+                        : 'Only unassigned customers are displayed. Customers already assigned to another legal entity cannot be selected.'}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -955,7 +978,7 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                         type="text"
                         value={customerSearchQuery}
                         onChange={(e) => setCustomerSearchQuery(e.target.value)}
-                        placeholder="Search by company name, email..."
+                        placeholder="Search unassigned customers by company name, email..."
                         className="w-full pl-9 pr-8 py-1.5 text-[12px] rounded-lg border border-[#c2c6d6] focus:outline-none focus:border-[#0058c3] bg-white"
                       />
                       {customerSearchQuery && (
@@ -992,18 +1015,13 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                   <div className="border border-[#c2c6d6] rounded-xl max-h-[190px] overflow-y-auto divide-y divide-[#f1f5f9] bg-white shadow-2xs">
                     {filteredCustomers.length === 0 ? (
                       <div className="py-6 text-center text-[12px] text-[#727785]">
-                        No customers matched your search query.
+                        {customerSearchQuery
+                          ? 'No unassigned customers matched your search query.'
+                          : 'No unassigned customers available. All customers are currently assigned to active legal entities.'}
                       </div>
                     ) : (
                       filteredCustomers.map((cust) => {
                         const isSelected = assignedCustomerIds.includes(cust.id);
-                        const otherEntityMapping = entities.find(
-                          (e) =>
-                            (!editingEntity || e.id !== editingEntity.id) &&
-                            e.mappedCustomers?.some(
-                              (mc) => mc.id === cust.id || mc.companyName.toLowerCase() === cust.companyName.toLowerCase()
-                            )
-                        );
 
                         return (
                           <div
@@ -1040,9 +1058,9 @@ export const BillingEntityManager: React.FC<BillingEntityManagerProps> = ({
                             </div>
 
                             <div className="text-right shrink-0">
-                              {otherEntityMapping ? (
-                                <span className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
-                                  Currently: {otherEntityMapping.code}
+                              {isSelected ? (
+                                <span className="text-[10.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">
+                                  Selected
                                 </span>
                               ) : (
                                 <span className="text-[10.5px] text-[#727785] bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full font-medium">
