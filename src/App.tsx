@@ -109,6 +109,7 @@ export default function App() {
         dataPeriod: '2026-10-01 - 2026-10-20',
         legalEntityName: previewInvoice.legalEntity?.name || 'FASTWAY LOGISTICS FULFILLMENT LLC',
         legalEntityCode: previewInvoice.legalEntity?.code || 'FW-US',
+        paymentGateway: previewInvoice.paymentGateway || 'Fastway Wallet',
         totalAmount: previewInvoice.amount,
         currency: 'USD',
         exportedBy: 'Admin (Super Admin)',

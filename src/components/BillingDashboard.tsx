@@ -227,6 +227,7 @@ Invoice ID:        ${log.invoiceId}
 Customer:          ${log.customerName} (${log.customerEmail})
 Data Period:       ${log.dataPeriod}
 Legal Entity:      ${log.legalEntityName} [${log.legalEntityCode || ''}]
+Payment Gateway:   ${log.paymentGateway || log.invoiceRecord?.paymentGateway || 'Fastway Wallet'}
 Total Amount:      $${log.totalAmount.toFixed(2)} ${log.currency}
 Exported By:       ${log.exportedBy}
 Export Timestamp:  ${log.exportTimestamp}
@@ -500,7 +501,7 @@ Generated via Fastway Logistics Fulfillment Platform.
                     <th className="py-3 px-4">Customer</th>
                     <th className="py-3 px-4">Kỳ dữ liệu</th>
                     <th className="py-3 px-4">Pháp nhân</th>
-                    <th className="py-3 px-4">Tổng tiền</th>
+                    <th className="py-3 px-4">Payment gateway</th>
                     <th className="py-3 px-4">Người xuất</th>
                     <th className="py-3 px-4">Thời điểm xuất</th>
                     <th className="py-3 px-4 text-center">Hành động</th>
@@ -559,12 +560,9 @@ Generated via Fastway Logistics Fulfillment Platform.
                           </div>
                         </td>
 
-                        {/* 5. Tổng tiền */}
-                        <td className="py-3.5 px-4 font-bold text-[#0b1c30] whitespace-nowrap">
-                          ${log.totalAmount.toFixed(2)}{' '}
-                          <span className="text-[11px] text-[#727785] font-normal">
-                            {log.currency}
-                          </span>
+                        {/* 5. Payment gateway */}
+                        <td className="py-3.5 px-4 text-[#424754] text-[13px] whitespace-nowrap font-medium">
+                          {log.paymentGateway || log.invoiceRecord?.paymentGateway || 'Fastway Wallet'}
                         </td>
 
                         {/* 6. Người xuất */}

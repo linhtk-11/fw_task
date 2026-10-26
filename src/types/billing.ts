@@ -137,6 +137,7 @@ export interface ExportLogRecord {
   dataPeriod: string; // e.g. "2026-10-01 - 2026-10-20"
   legalEntityName: string;
   legalEntityCode?: string;
+  paymentGateway?: PaymentGateway | string;
   totalAmount: number;
   currency: string;
   exportedBy: string; // e.g. "Admin (Super Admin)"
