@@ -20,6 +20,7 @@ import {
   MOCK_CUSTOMERS,
   LEGAL_ENTITIES,
   INITIAL_BILLING_ENTITIES,
+  INITIAL_EXPORT_LOGS,
 } from './data/mockBillingData';
 import {
   InvoiceRecord,
@@ -27,6 +28,7 @@ import {
   PaymentGateway,
   InvoiceScheduleSettings,
   BillingEntity,
+  ExportLogRecord,
 } from './types/billing';
 
 export default function App() {
@@ -36,6 +38,8 @@ export default function App() {
   const [selectedEntityIdForDetail, setSelectedEntityIdForDetail] = useState<string | null>(null);
   const [detailInitialMode, setDetailInitialMode] = useState<'view' | 'edit'>('view');
   const [settingTab, setSettingTab] = useState<'general' | 'invoice-setting'>('invoice-setting');
+  const [adminBillingSubTab, setAdminBillingSubTab] = useState<string>('Invoice');
+  const [exportLogs, setExportLogs] = useState<ExportLogRecord[]>(INITIAL_EXPORT_LOGS);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Metrics
@@ -90,6 +94,28 @@ export default function App() {
         ...prev,
         paid: prev.paid + previewInvoice.amount,
       }));
+
+      // Automatically log to Export Logs
+      const now = new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const timeStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+      const newLog: ExportLogRecord = {
+        id: `exp-log-${Date.now()}`,
+        invoiceId: previewInvoice.id,
+        customerName: previewInvoice.customerName || previewInvoice.customer?.companyName || 'Printway Co., Ltd',
+        customerEmail: previewInvoice.customerEmail,
+        dataPeriod: '2026-10-01 - 2026-10-20',
+        legalEntityName: previewInvoice.legalEntity?.name || 'FASTWAY LOGISTICS FULFILLMENT LLC',
+        legalEntityCode: previewInvoice.legalEntity?.code || 'FW-US',
+        totalAmount: previewInvoice.amount,
+        currency: 'USD',
+        exportedBy: 'Admin (Super Admin)',
+        exportTimestamp: timeStr,
+        invoiceRecord: previewInvoice,
+      };
+      setExportLogs((prev) => [newLog, ...prev]);
+      setAdminBillingSubTab('Export Logs');
     }
 
     addToast(
@@ -258,10 +284,12 @@ export default function App() {
       <Sidebar
         currentView={currentView}
         settingTab={settingTab}
+        billingSubTab={adminBillingSubTab}
         userRole={userRole}
         onNavigate={(view, subTab) => {
           setCurrentView(view);
-          if (subTab) setSettingTab(subTab);
+          if (view === 'setting' && subTab) setSettingTab(subTab);
+          if (view === 'billing' && subTab) setAdminBillingSubTab(subTab);
         }}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -379,6 +407,9 @@ export default function App() {
           <BillingDashboard
             metrics={adminMetrics}
             invoices={adminInvoices}
+            exportLogs={exportLogs}
+            activeTab={adminBillingSubTab}
+            onTabChange={setAdminBillingSubTab}
             onNavigateCreateInvoice={() => setCurrentView('export-invoice')}
             onOpenInvoicePreview={(inv) => {
               setPreviewInvoice(inv);
@@ -388,6 +419,7 @@ export default function App() {
             onOpenSentPayment={() => setIsSentPaymentOpen(true)}
             onExportSummary={handleExportSummary}
             onNavigateToBillingEntity={() => setCurrentView('billing-entity')}
+            onToast={addToast}
           />
         )}
 

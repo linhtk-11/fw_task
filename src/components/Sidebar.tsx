@@ -25,6 +25,7 @@ import {
 interface SidebarProps {
   currentView: 'billing' | 'export-invoice' | 'setting' | 'billing-entity' | 'legal-entity-detail';
   settingTab?: string;
+  billingSubTab?: string;
   userRole: 'customer' | 'admin';
   onNavigate: (view: any, subTab?: any) => void;
   isCollapsed: boolean;
@@ -44,6 +45,7 @@ interface NavItem {
 export const Sidebar: React.FC<SidebarProps> = ({
   currentView,
   settingTab = 'invoice-setting',
+  billingSubTab = 'Invoice',
   userRole,
   onNavigate,
   isCollapsed,
@@ -115,7 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Billing',
       icon: Wallet,
       expandable: true,
-      subItems: ['Invoice', 'Legal Entity'],
+      subItems: ['Invoice', 'Export Logs', 'Legal Entity'],
       isActive: currentView === 'billing' || currentView === 'export-invoice',
       action: () => {
         toggleSection('billing');
@@ -234,7 +236,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       const isSubActive =
                         (sub === 'Invoice Setting' && currentView === 'setting') ||
                         ((sub === 'Legal Entity' || sub === 'Billing Entity') && (currentView === 'billing-entity' || currentView === 'legal-entity-detail')) ||
-                        (sub === 'Invoice' && currentView === 'billing');
+                        (sub === 'Invoice' && currentView === 'billing' && billingSubTab === 'Invoice') ||
+                        (sub === 'Export Logs' && currentView === 'billing' && billingSubTab === 'Export Logs');
 
                       return (
                         <div
@@ -245,7 +248,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             } else if (sub === 'Legal Entity' || sub === 'Billing Entity') {
                               onNavigate('billing-entity');
                             } else if (sub === 'Invoice') {
-                              onNavigate('billing');
+                              onNavigate('billing', 'Invoice');
+                            } else if (sub === 'Export Logs') {
+                              onNavigate('billing', 'Export Logs');
                             }
                           }}
                           className={`py-1.5 px-2 rounded cursor-pointer transition-colors flex items-center justify-between ${

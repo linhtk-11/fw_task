@@ -128,3 +128,18 @@ export interface InvoiceScheduleSettings {
   estimatedOrdersCount?: number;
   estimatedAmount?: number;
 }
+
+export interface ExportLogRecord {
+  id: string;
+  invoiceId: string;
+  customerName: string;
+  customerEmail: string;
+  dataPeriod: string; // e.g. "2026-10-01 - 2026-10-20"
+  legalEntityName: string;
+  legalEntityCode?: string;
+  totalAmount: number;
+  currency: string;
+  exportedBy: string; // e.g. "Admin (Super Admin)"
+  exportTimestamp: string; // e.g. "2026-10-22 14:35:10"
+  invoiceRecord?: InvoiceRecord;
+}
