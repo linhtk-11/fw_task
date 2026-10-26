@@ -8,11 +8,9 @@ import {
   ListOrdered,
   ChevronLeft,
   ChevronRight,
-  ArrowRight,
   Clock,
   Eye,
   Download,
-  Building2,
   FileText,
   RotateCcw,
 } from 'lucide-react';
@@ -32,7 +30,7 @@ interface CustomerBillingViewProps {
   onOpenTopUp: () => void;
   onOpenInvoicePreview: (invoice: InvoiceRecord) => void;
   onOpenOrderList: (invoice: InvoiceRecord) => void;
-  onNavigateToSettings: () => void;
+  onNavigateToSettings?: () => void;
   onAddToast?: (title: string, message?: string, type?: 'success' | 'info' | 'error') => void;
 }
 
@@ -300,15 +298,6 @@ export const CustomerBillingView: React.FC<CustomerBillingViewProps> = ({
             </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={onNavigateToSettings}
-          className="text-[#0058c3] hover:text-[#004398] font-semibold text-[13px] flex items-center gap-1.5 cursor-pointer self-end sm:self-auto shrink-0 hover:underline"
-        >
-          <span>Manage settings</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
 
       {/* VIEW: TAB "Periodic Invoices" */}
