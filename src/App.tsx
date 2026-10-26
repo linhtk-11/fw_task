@@ -39,6 +39,7 @@ export default function App() {
   const [detailInitialMode, setDetailInitialMode] = useState<'view' | 'edit'>('view');
   const [settingTab, setSettingTab] = useState<'general' | 'invoice-setting'>('invoice-setting');
   const [adminBillingSubTab, setAdminBillingSubTab] = useState<string>('Invoice');
+  const [customerBillingSubTab, setCustomerBillingSubTab] = useState<string>('Invoice');
   const [exportLogs, setExportLogs] = useState<ExportLogRecord[]>(INITIAL_EXPORT_LOGS);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -284,12 +285,18 @@ export default function App() {
       <Sidebar
         currentView={currentView}
         settingTab={settingTab}
-        billingSubTab={adminBillingSubTab}
+        billingSubTab={userRole === 'customer' ? customerBillingSubTab : adminBillingSubTab}
         userRole={userRole}
         onNavigate={(view, subTab) => {
           setCurrentView(view);
           if (view === 'setting' && subTab) setSettingTab(subTab);
-          if (view === 'billing' && subTab) setAdminBillingSubTab(subTab);
+          if (view === 'billing' && subTab) {
+            if (userRole === 'customer') {
+              setCustomerBillingSubTab(subTab);
+            } else {
+              setAdminBillingSubTab(subTab);
+            }
+          }
         }}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
@@ -365,9 +372,10 @@ export default function App() {
           <CustomerSettingView
             scheduleSettings={scheduleSettings}
             activeTab={settingTab}
-            onTabChange={setSettingTab}
+            onTabChange={(tab) => setSettingTab(tab as any)}
             onSaveSchedule={handleSaveSchedule}
             onNavigateToBilling={() => setCurrentView('billing')}
+            onAddToast={addToast}
           />
         )}
 
@@ -379,6 +387,8 @@ export default function App() {
             walletBalance={walletBalance}
             unpaidAmount={unpaidAmount}
             autoRecharge={autoRecharge}
+            activeSubTab={customerBillingSubTab}
+            onSubTabChange={setCustomerBillingSubTab}
             onToggleAutoRecharge={(val) => {
               setAutoRecharge(val);
               addToast(
@@ -399,6 +409,7 @@ export default function App() {
               setCurrentView('setting');
               setSettingTab('invoice-setting');
             }}
+            onAddToast={addToast}
           />
         )}
 

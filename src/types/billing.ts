@@ -143,3 +143,19 @@ export interface ExportLogRecord {
   exportTimestamp: string; // e.g. "2026-10-22 14:35:10"
   invoiceRecord?: InvoiceRecord;
 }
+
+export interface PeriodicInvoiceRecord {
+  id: string;
+  billingPeriodStart: string;
+  billingPeriodEnd: string;
+  billingPeriodFormatted: string; // "from date – to date" e.g. "01-10-2026 – 15-10-2026"
+  dateCreated: string; // e.g. "15-10-2026 18:00:00"
+  dateCreatedIso: string; // "2026-10-15" for date filtering
+  legalEntityName: string;
+  legalEntityCode?: string;
+  totalAmount: number;
+  currency: string;
+  ordersCount: number;
+  status: 'Issued' | 'Paid' | 'Processing';
+  invoiceRecord?: InvoiceRecord;
+}

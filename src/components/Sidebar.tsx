@@ -53,12 +53,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [expandedSections, setExpandedSections] = React.useState<Record<string, boolean>>({
     orders: userRole === 'customer', // expand by default in customer view as seen in image_837a4698.png
+    billing: true,
     products: false,
     pickup: false,
     freight: false,
     report: false,
     carrier: false,
-    setting: true, // expand Setting section by default so Invoice Setting is visible right below Setting
+    setting: true,
   });
 
   const toggleSection = (id: string) => {
@@ -82,8 +83,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'billing',
       label: 'Billing',
       icon: Wallet,
+      expandable: true,
+      subItems: ['Invoice', 'Periodic Invoices'],
       isActive: currentView === 'billing' || currentView === 'export-invoice',
-      action: () => onNavigate('billing'),
+      action: () => {
+        toggleSection('billing');
+        onNavigate('billing');
+      },
     },
     { id: 'report', label: 'Report', icon: FileBarChart, expandable: true },
     { id: 'pricing', label: 'Pricing', icon: CreditCard },
@@ -93,12 +99,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'setting',
       label: 'Setting',
       icon: Settings,
-      expandable: true,
-      subItems: ['Invoice Setting'],
       isActive: currentView === 'setting',
       action: () => {
-        toggleSection('setting');
-        onNavigate('setting', 'invoice-setting');
+        onNavigate('setting');
       },
     },
   ];
@@ -237,6 +240,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         (sub === 'Invoice Setting' && currentView === 'setting') ||
                         ((sub === 'Legal Entity' || sub === 'Billing Entity') && (currentView === 'billing-entity' || currentView === 'legal-entity-detail')) ||
                         (sub === 'Invoice' && currentView === 'billing' && billingSubTab === 'Invoice') ||
+                        (sub === 'Periodic Invoices' && currentView === 'billing' && billingSubTab === 'Periodic Invoices') ||
                         (sub === 'Export Logs' && currentView === 'billing' && billingSubTab === 'Export Logs');
 
                       return (
@@ -249,6 +253,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               onNavigate('billing-entity');
                             } else if (sub === 'Invoice') {
                               onNavigate('billing', 'Invoice');
+                            } else if (sub === 'Periodic Invoices') {
+                              onNavigate('billing', 'Periodic Invoices');
                             } else if (sub === 'Export Logs') {
                               onNavigate('billing', 'Export Logs');
                             }
