@@ -53,12 +53,26 @@ const ACCOUNT_SUB_TABS = [
 
 export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
   scheduleSettings,
+  activeTab,
   onSaveSchedule,
   onNavigateToBilling,
   onAddToast,
 }) => {
   // Top navigation sub-tab (Default to 'Setting' matching image_917f6409.png)
   const [activeAccountTab, setActiveAccountTab] = useState<string>('Setting');
+
+  // When navigated with activeTab = 'invoice-setting', ensure Setting tab is active and scroll to section
+  React.useEffect(() => {
+    if (activeTab === 'invoice-setting') {
+      setActiveAccountTab('Setting');
+      setTimeout(() => {
+        const el = document.getElementById('invoice-setting-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    }
+  }, [activeTab]);
 
   // Account Settings (Matching image_917f6409.png)
   const [selectedTimeZone, setSelectedTimeZone] = useState<string>('00:00');
@@ -303,7 +317,7 @@ export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
 
       {/* Integrated Section: Invoice Setting / Cài đặt hóa đơn theo kỳ */}
       {/* Spec: "Phần Cho phần Invoice Setting vào màn hình trên" */}
-      <div className="bg-white border border-[#e2e8f0] rounded-xl shadow-xs overflow-hidden">
+      <div id="invoice-setting-section" className="bg-white border border-[#e2e8f0] rounded-xl shadow-xs overflow-hidden scroll-mt-6">
         {/* Card Header with Status Badge */}
         <div className="p-5 border-b border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#fafbfc]">
           <div className="flex items-center gap-3">
@@ -320,10 +334,10 @@ export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
             </div>
           </div>
 
-          {/* Auto Consolidation Toggle */}
+          {/* Active Toggle */}
           <div className="flex items-center gap-3">
-            <span className="text-[12px] font-medium text-[#727785]">
-              Periodic Consolidation:
+            <span className="text-[13px] font-semibold text-[#0b1c30]">
+              Active:
             </span>
             <span
               className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
@@ -332,7 +346,7 @@ export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
                   : 'bg-slate-100 text-slate-500 border border-slate-200'
               }`}
             >
-              {autoGenerateInvoices ? 'Auto Active' : 'Manual'}
+              {autoGenerateInvoices ? 'Active' : 'Inactive'}
             </span>
             <button
               type="button"
@@ -340,6 +354,7 @@ export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
               className={`w-10 h-5.5 rounded-full transition-colors relative cursor-pointer ${
                 autoGenerateInvoices ? 'bg-[#00d084]' : 'bg-slate-300'
               }`}
+              title={autoGenerateInvoices ? 'Deactivate periodic invoices' : 'Activate periodic invoices'}
             >
               <span
                 className={`w-4 h-4 rounded-full bg-white absolute top-0.75 transition-transform ${
@@ -350,160 +365,171 @@ export const CustomerSettingView: React.FC<CustomerSettingViewProps> = ({
           </div>
         </div>
 
-        {/* Card Body */}
-        <div className="p-6 space-y-6">
-          {/* Active Period Overview Banner */}
-          <div className="bg-[#f0f7ff] border border-[#d0e5ff] rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-[#0058c3] shrink-0" />
+        {/* Card Body: Only shown when Active is enabled */}
+        {autoGenerateInvoices ? (
+          <div className="p-6 space-y-6">
+            {/* Active Period Overview Banner */}
+            <div className="bg-[#f0f7ff] border border-[#d0e5ff] rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-[#0058c3] shrink-0" />
+                <div>
+                  <span className="text-[11px] font-bold tracking-wider text-[#0058c3] uppercase block">
+                    Current Active Billing Cycle
+                  </span>
+                  <span className="text-[13px] font-semibold text-[#0b1c30]">
+                    {scheduleSettings.currentPeriod}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[12px] text-[#424754] flex items-center gap-2">
+                <span>Next invoice execution:</span>
+                <strong className="text-[#0058c3] font-semibold">
+                  {scheduleSettings.nextInvoiceDate}
+                </strong>
+              </div>
+            </div>
+
+            {/* Form Controls Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {/* Frequency Selection */}
               <div>
-                <span className="text-[11px] font-bold tracking-wider text-[#0058c3] uppercase block">
-                  Current Active Billing Cycle
-                </span>
-                <span className="text-[13px] font-semibold text-[#0b1c30]">
-                  {scheduleSettings.currentPeriod}
-                </span>
-              </div>
-            </div>
-
-            <div className="text-[12px] text-[#424754] flex items-center gap-2">
-              <span>Next invoice execution:</span>
-              <strong className="text-[#0058c3] font-semibold">
-                {scheduleSettings.nextInvoiceDate}
-              </strong>
-            </div>
-          </div>
-
-          {/* Form Controls Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* Frequency Selection */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
-                Billing Frequency (Tần suất xuất hóa đơn)
-              </label>
-              <div className="relative">
-                <select
-                  value={frequency}
-                  onChange={(e) => setFrequency(e.target.value as InvoiceFrequency)}
-                  className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] appearance-none focus:outline-none focus:ring-1 focus:ring-[#0080ff] cursor-pointer"
-                >
-                  <option value="Daily">Daily (Hàng ngày)</option>
-                  <option value="Weekly">Weekly (Hàng tuần)</option>
-                  <option value="Bi-Weekly">Bi-Weekly (2 tuần / kỳ)</option>
-                  <option value="Monthly">Monthly (Hàng tháng)</option>
-                  <option value="Quarterly">Quarterly (Hàng quý)</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Execution Schedule */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
-                Execution Day & Time (Thời điểm xuất)
-              </label>
-              <div className="grid grid-cols-2 gap-2">
+                <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
+                  Billing Frequency (Tần suất xuất hóa đơn)
+                </label>
                 <div className="relative">
                   <select
-                    value={executionDay}
-                    onChange={(e) => setExecutionDay(e.target.value)}
+                    value={frequency}
+                    onChange={(e) => setFrequency(e.target.value as InvoiceFrequency)}
                     className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] appearance-none focus:outline-none focus:ring-1 focus:ring-[#0080ff] cursor-pointer"
                   >
-                    <option value="Day 15">Day 15</option>
-                    <option value="Day 30">Day 30</option>
-                    <option value="Last day of month">Last day</option>
-                    <option value="Friday">Friday</option>
-                    <option value="Monday">Monday</option>
+                    <option value="Daily">Daily (Hàng ngày)</option>
+                    <option value="Weekly">Weekly (Hàng tuần)</option>
+                    <option value="Bi-Weekly">Bi-Weekly (2 tuần / kỳ)</option>
+                    <option value="Monthly">Monthly (Hàng tháng)</option>
+                    <option value="Quarterly">Quarterly (Hàng quý)</option>
                   </select>
-                  <ChevronDown className="w-4 h-4 text-[#727785] absolute right-2.5 top-3 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
                 </div>
+              </div>
+
+              {/* Execution Schedule */}
+              <div>
+                <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
+                  Execution Day & Time (Thời điểm xuất)
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="relative">
+                    <select
+                      value={executionDay}
+                      onChange={(e) => setExecutionDay(e.target.value)}
+                      className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] appearance-none focus:outline-none focus:ring-1 focus:ring-[#0080ff] cursor-pointer"
+                    >
+                      <option value="Day 15">Day 15</option>
+                      <option value="Day 30">Day 30</option>
+                      <option value="Last day of month">Last day</option>
+                      <option value="Friday">Friday</option>
+                      <option value="Monday">Monday</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-[#727785] absolute right-2.5 top-3 pointer-events-none" />
+                  </div>
+                  <input
+                    type="time"
+                    value={executionTime}
+                    onChange={(e) => setExecutionTime(e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] focus:outline-none focus:ring-1 focus:ring-[#0080ff]"
+                  />
+                </div>
+              </div>
+
+              {/* Start Date */}
+              <div>
+                <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
+                  Start Collecting Orders From (Bắt đầu gom đơn)
+                </label>
                 <input
-                  type="time"
-                  value={executionTime}
-                  onChange={(e) => setExecutionTime(e.target.value)}
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] focus:outline-none focus:ring-1 focus:ring-[#0080ff]"
                 />
               </div>
-            </div>
 
-            {/* Start Date */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
-                Start Collecting Orders From (Bắt đầu gom đơn)
-              </label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] focus:outline-none focus:ring-1 focus:ring-[#0080ff]"
-              />
-            </div>
+              {/* Preferred Legal Entity */}
+              <div className="md:col-span-2 lg:col-span-2">
+                <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
+                  Legal Entity (Pháp nhân phát hành mặc định)
+                </label>
+                <div className="relative">
+                  <select
+                    value={legalEntityChoice}
+                    onChange={(e) => setLegalEntityChoice(e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] appearance-none focus:outline-none focus:ring-1 focus:ring-[#0080ff] cursor-pointer"
+                  >
+                    <option value="FASTWAY LOGISTICS FULFILLMENT LLC">
+                      FASTWAY LOGISTICS FULFILLMENT LLC (FW-US) — 1300 E 7th St, Austin, TX 78702
+                    </option>
+                    <option value="PRINTWAY LLC">
+                      PRINTWAY LLC (PW-US) — 16192 Coastal Hwy, Lewes, DE 19958
+                    </option>
+                    <option value="PRINTWAY VIETNAM CO., LTD">
+                      PRINTWAY VIETNAM CO., LTD (PW-VN) — 12A Floor, Peakview Tower, Hanoi
+                    </option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
+                </div>
+              </div>
 
-            {/* Preferred Legal Entity */}
-            <div className="md:col-span-2 lg:col-span-2">
-              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
-                Legal Entity (Pháp nhân phát hành mặc định)
-              </label>
-              <div className="relative">
-                <select
-                  value={legalEntityChoice}
-                  onChange={(e) => setLegalEntityChoice(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-[#e2e8f0] bg-white text-[13px] text-[#0b1c30] appearance-none focus:outline-none focus:ring-1 focus:ring-[#0080ff] cursor-pointer"
-                >
-                  <option value="FASTWAY LOGISTICS FULFILLMENT LLC">
-                    FASTWAY LOGISTICS FULFILLMENT LLC (FW-US) — 1300 E 7th St, Austin, TX 78702
-                  </option>
-                  <option value="PRINTWAY LLC">
-                    PRINTWAY LLC (PW-US) — 16192 Coastal Hwy, Lewes, DE 19958
-                  </option>
-                  <option value="PRINTWAY VIETNAM CO., LTD">
-                    PRINTWAY VIETNAM CO., LTD (PW-VN) — 12A Floor, Peakview Tower, Hanoi
-                  </option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
+              {/* Notification Email */}
+              <div>
+                <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
+                  Invoice Recipient Email (Email nhận hóa đơn)
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={notificationRecipientEmail}
+                    onChange={(e) => setNotificationRecipientEmail(e.target.value)}
+                    className="w-full h-10 pl-3 pr-8 rounded-lg border border-[#e2e8f0] text-[13px] text-[#0b1c30] focus:outline-none focus:ring-1 focus:ring-[#0080ff]"
+                  />
+                  <Mail className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
+                </div>
               </div>
             </div>
 
-            {/* Notification Email */}
-            <div>
-              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-1.5">
-                Invoice Recipient Email (Email nhận hóa đơn)
+            {/* Included Transaction Types */}
+            <div className="pt-2 border-t border-[#f1f5f9]">
+              <label className="block text-[12px] font-semibold text-[#0b1c30] mb-2">
+                Included Transactions (Loại giao dịch gộp vào kỳ)
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  value={notificationRecipientEmail}
-                  onChange={(e) => setNotificationRecipientEmail(e.target.value)}
-                  className="w-full h-10 pl-3 pr-8 rounded-lg border border-[#e2e8f0] text-[13px] text-[#0b1c30] focus:outline-none focus:ring-1 focus:ring-[#0080ff]"
-                />
-                <Mail className="w-4 h-4 text-[#727785] absolute right-3 top-3 pointer-events-none" />
+              <div className="flex flex-wrap gap-4 text-[13px] text-[#0b1c30]">
+                {(['Payment', 'Surcharge', 'Refund'] as const).map((type) => {
+                  const isChecked = selectedTxTypes.includes(type);
+                  return (
+                    <label key={type} className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handleToggleTxType(type)}
+                        className="w-4 h-4 rounded text-[#0080ff] border-[#c2c6d6] focus:ring-[#0080ff] cursor-pointer"
+                      />
+                      <span>{type} Orders</span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
           </div>
-
-          {/* Included Transaction Types */}
-          <div className="pt-2 border-t border-[#f1f5f9]">
-            <label className="block text-[12px] font-semibold text-[#0b1c30] mb-2">
-              Included Transactions (Loại giao dịch gộp vào kỳ)
-            </label>
-            <div className="flex flex-wrap gap-4 text-[13px] text-[#0b1c30]">
-              {(['Payment', 'Surcharge', 'Refund'] as const).map((type) => {
-                const isChecked = selectedTxTypes.includes(type);
-                return (
-                  <label key={type} className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => handleToggleTxType(type)}
-                      className="w-4 h-4 rounded text-[#0080ff] border-[#c2c6d6] focus:ring-[#0080ff] cursor-pointer"
-                    />
-                    <span>{type} Orders</span>
-                  </label>
-                );
-              })}
-            </div>
+        ) : (
+          <div className="p-8 text-center bg-[#fafbfc]">
+            <p className="text-[14px] font-semibold text-[#0b1c30]">
+              Invoice Setting is currently Inactive
+            </p>
+            <p className="text-[12px] text-[#727785] mt-1 max-w-md mx-auto">
+              Switch on <strong className="text-[#0058c3]">Active</strong> above to display and configure billing frequency, execution day/time, starting date, legal entity, and automatic delivery settings.
+            </p>
           </div>
-        </div>
+        )}
 
         {/* Card Footer */}
         <div className="p-4 bg-[#f8f9ff] border-t border-[#e2e8f0] flex items-center justify-between">
