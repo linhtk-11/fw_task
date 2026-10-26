@@ -377,7 +377,7 @@ export const CustomerBillingView: React.FC<CustomerBillingViewProps> = ({
                 <thead>
                   <tr className="bg-[#f8f9ff] border-b border-[#e2e8f0] text-[12px] font-semibold text-[#727785]">
                     <th className="py-3.5 px-4">Invoice ID</th>
-                    <th className="py-3.5 px-4">Billing Period</th>
+                    <th className="py-3.5 px-4">Kỳ dữ liệu</th>
                     <th className="py-3.5 px-4">Date Created</th>
                     <th className="py-3.5 px-4">Legal Entity</th>
                     <th className="py-3.5 px-4 text-right">Total Amount (USD)</th>
